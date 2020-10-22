@@ -126,7 +126,7 @@ test:
               name: '你是OP啊啊'
             - material: DIAMOND_SWORD
               name: '你是OP啊啊'
-              ```
+```
 model.yml
 ```
 point:
@@ -162,4 +162,4 @@ point:
             return result;
         }
       '
-      ```
+```
