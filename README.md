@@ -15,6 +15,7 @@ bungeecord: all
 
 ## 演示
 
+![alt 喵喵喵] https://github.com/MeowRay/WdsjGui/blob/main/demo.gif
 
 ## 配置
 ### config.yml
