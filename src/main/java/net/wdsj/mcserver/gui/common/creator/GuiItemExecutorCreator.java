@@ -2,6 +2,8 @@ package net.wdsj.mcserver.gui.common.creator;
 
 import net.wdsj.mcserver.gui.common.executor.GuiItemExecutor;
 
+import java.util.Map;
+
 /**
  * @author Arthur
  * @version 1.0
@@ -9,6 +11,7 @@ import net.wdsj.mcserver.gui.common.executor.GuiItemExecutor;
  */
 public interface GuiItemExecutorCreator<Handler> {
 
-    GuiItemExecutor<Handler> create(String args);
+      GuiItemExecutor<Handler> create(String args, Map<String, Object> argsMap) ;
+
 
 }

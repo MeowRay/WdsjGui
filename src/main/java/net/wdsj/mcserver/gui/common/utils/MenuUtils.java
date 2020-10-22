@@ -82,14 +82,18 @@ public class MenuUtils {
         return text;
     }
 
-
     public static <T, Handler> T scriptExecute(String text, Handler handler, T def) {
+        return scriptExecute(text, new HashMap<>(), handler, def);
+    }
+
+    public static <T, Handler> T scriptExecute(String text, Map<String, Object> map, Handler handler, T def) {
         if (text.isEmpty()) return def;
         try {
             String replace = PlaceholderManager.replace(handler, text);
-            HashMap<String, Object> map = Maps.newHashMap(scriptObjMap);
-            map.put("handler" , handler);
-            Object value = ScriptUtils.getValue(replace, map);
+            HashMap<String, Object> oMap = new HashMap<>(map);
+            oMap.putAll(scriptObjMap);
+            oMap.put("handler", handler);
+            Object value = ScriptUtils.getValue(replace, oMap);
             return (T) value;
         } catch (Exception e) {
             e.printStackTrace();

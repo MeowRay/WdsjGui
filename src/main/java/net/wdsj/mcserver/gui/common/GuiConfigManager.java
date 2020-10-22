@@ -253,12 +253,12 @@ public class GuiConfigManager {
 
         }
         for (GuiItem<?, ?> item : items) {
-            setGuiItemAction(item, config.getAction());
+            setGuiItemAction(item, config.getAction() , config.getArgs());
         }
         return items;
     }
 
-    public static <H, I> GuiItem<H, I> setGuiItemAction(GuiItem<H, I> guiItem, Map<String, List<String>> actionMap) {
+    public static <H, I> GuiItem<H, I> setGuiItemAction(GuiItem<H, I> guiItem, Map<String, List<String>> actionMap , Map<String, Object> argsMap) {
         if (guiItem instanceof GuiItemBase) {
             GuiItemBase<H, I> guiItemBase = (GuiItemBase<H, I>) guiItem;
             for (Map.Entry<String, List<String>> entry : actionMap.entrySet()) {
@@ -268,7 +268,7 @@ public class GuiConfigManager {
                     List<String> value = entry.getValue();
                     GuiItemExecutorCollection<H> executorCollection = new GuiItemExecutorCollection<>();
                     for (String s : value) {
-                        Optional<GuiItemExecutor<Object>> guiItemExecutor = getGuiItemExecutorCreator(s);
+                        Optional<GuiItemExecutor<Object>> guiItemExecutor = getGuiItemExecutorCreator(s , argsMap);
                         if (guiItemExecutor.isPresent()) {
                             executorCollection.addExecutor((GuiItemExecutor<H>) guiItemExecutor.get());
                         }
@@ -280,12 +280,12 @@ public class GuiConfigManager {
         return guiItem;
     }
 
-    public static <Handler> Optional<GuiItemExecutor<Handler>> getGuiItemExecutorCreator(String text) {
+    public static <Handler> Optional<GuiItemExecutor<Handler>> getGuiItemExecutorCreator(String text , Map<String, Object> argsMap) {
         String[] split = text.split(":", 2);
         GuiItemExecutorCreator<?> actionCreator = getMenuExecutorCreator(split[0]);
         if (actionCreator != null) {
             String s = ArrayUtils.get(split, 1);
-            return Optional.of((GuiItemExecutor<Handler>) actionCreator.create(s));
+            return Optional.of((GuiItemExecutor<Handler>) actionCreator.create(s , argsMap));
         }
         return Optional.absent();
     }

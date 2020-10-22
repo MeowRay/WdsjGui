@@ -13,8 +13,6 @@ point:
       - 'js:
         main();
         function main(){
-            var reason = "$reason";
-            var doneClose = "$doneClose";
             var servers = "$server".split(",");
             var result = false;
             handler.sendMessage("单价是: $price reason: " + reason);
@@ -24,7 +22,7 @@ point:
             } else {
                 handler.spigot().sendMessage(Java.type("net.wdsj.servercore.message.ServerMessages$Component").TAKE_POINT_FAIL);
             }
-            if (doneClose === "true"){
+            if (doneClose){
                 guimanager.static.close(handler);
             }
 

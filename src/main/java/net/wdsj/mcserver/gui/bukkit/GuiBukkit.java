@@ -17,6 +17,7 @@ import net.wdsj.mcserver.gui.common.*;
 import net.wdsj.mcserver.gui.common.creator.GuiItemExecutorCreator;
 import net.wdsj.mcserver.gui.common.creator.GuiSignExecutorCreator;
 import net.wdsj.mcserver.gui.common.executor.GuiItemCommonOpenExecutor;
+import net.wdsj.mcserver.gui.common.executor.GuiItemExecutor;
 import net.wdsj.mcserver.gui.common.utils.MenuUtils;
 import net.wdsj.servercore.WdsjServerAPI;
 import net.wdsj.servercore.common.command.CommandProxyBuilder;
@@ -70,12 +71,12 @@ public final class GuiBukkit extends JavaPlugin {
         GuiConfigManager.registerItemCreator("BUKKIT", new GuiItemBukkitConfigCreator());
 
         //ITEM CREATOR
-        GuiConfigManager.registerMenuExecutorCreator("open", (GuiItemExecutorCreator<Player>) args -> new GuiItemCommonOpenExecutor<>(args, GuiFactory.GUIMENU_RENDER_BUKKIT_PACKET_ADAPTER));
-        GuiConfigManager.registerMenuExecutorCreator("close", (GuiItemExecutorCreator<Player>) args -> new GuiItemBukkitCloseExecutor());
-        GuiConfigManager.registerMenuExecutorCreator("js", (GuiItemExecutorCreator<Player>) GuiItemBukkitJavaScriptExecutor::new);
-        GuiConfigManager.registerMenuExecutorCreator("cmd", (GuiItemExecutorCreator<Player>) GuiItemBukkitCommandExecutor::new);
-        GuiConfigManager.registerMenuExecutorCreator("title", (GuiItemExecutorCreator<Player>) GuiItemBukkitTitleExecutor::new);
-        GuiConfigManager.registerMenuExecutorCreator("sound", (GuiItemExecutorCreator<Player>) args -> {
+        GuiConfigManager.registerMenuExecutorCreator("open", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemCommonOpenExecutor<>(args, GuiFactory.GUIMENU_RENDER_BUKKIT_PACKET_ADAPTER));
+        GuiConfigManager.registerMenuExecutorCreator("close", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemBukkitCloseExecutor());
+        GuiConfigManager.registerMenuExecutorCreator("js", (GuiItemExecutorCreator<Player>) (args, argsMap) -> new GuiItemBukkitJavaScriptExecutor(args , argsMap));
+        GuiConfigManager.registerMenuExecutorCreator("cmd", (GuiItemExecutorCreator<Player>) (args,map) -> new GuiItemBukkitCommandExecutor(args));
+        GuiConfigManager.registerMenuExecutorCreator("title", (GuiItemExecutorCreator<Player>)  (args, map)  -> new GuiItemBukkitTitleExecutor(args));
+        GuiConfigManager.registerMenuExecutorCreator("sound", (GuiItemExecutorCreator<Player>) (args, map) -> {
             String[] split = args.split("-", 3);
             String n = ArrayUtils.get(split, 0);
             String v = ArrayUtils.get(split, 1);
