@@ -1,0 +1,14 @@
+name: ${project.name}
+version: ${project.version}
+main: net.wdsj.mcserver.gui.bukkit.GuiBukkit
+api-version: 1.16
+depend:
+  - ProtocolLib
+  - WdsjLib
+
+commands:
+  guiadmin:
+    permission: "gui.admin"
+  gui:
+    permission: "gui.player"
+    default: true

@@ -1,0 +1,33 @@
+point:
+  display:
+    - material: STONE
+  requirement-args:
+    - price
+    - reason
+  args:
+    reason: ''
+    server: ''
+    doneClose: 'true'
+  action:
+    left:
+      - 'js:
+        main();
+        function main(){
+            var reason = "$reason";
+            var doneClose = "$doneClose";
+            var servers = "$server".split(",");
+            var result = false;
+            handler.sendMessage("单价是: $price reason: " + reason);
+            if (eco.take(handler.getName(),$price,"POINT",reason)){
+                title.sendTitle(handler, "§a§l购买成功");
+                result = true;
+            } else {
+                handler.spigot().sendMessage(Java.type("net.wdsj.servercore.message.ServerMessages$Component").TAKE_POINT_FAIL);
+            }
+            if (doneClose === "true"){
+                guimanager.static.close(handler);
+            }
+
+            return result;
+        }
+      '

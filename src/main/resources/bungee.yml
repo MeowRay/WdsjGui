@@ -1,0 +1,6 @@
+name: ${project.name}
+version: ${project.version}
+main: net.wdsj.mcserver.gui.bungee.GuiBungee
+
+depends:
+  - WdsjLib
