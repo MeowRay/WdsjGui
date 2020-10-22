@@ -5,6 +5,8 @@
 spigot: 1.7-1.16
 bungeecord: all
 
+**仅供学习使用!**
+
 服务器: wdsj.net
 
 ## 特性
