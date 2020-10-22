@@ -9,7 +9,7 @@
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>WdsjGui</name>
+    <name>WdsjGui</name><!--....-->
 
     <properties>
         <java.version>1.8</java.version>
