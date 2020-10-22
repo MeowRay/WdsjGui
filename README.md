@@ -5,6 +5,8 @@
 spigot: 1.7-1.16
 bungeecord: all
 
+**仅供学习使用!**
+
 服务器: wdsj.net
 
 ## 特性
@@ -20,6 +22,18 @@ bungeecord: all
 ## 配置
 ### config.yml
 ```
+model-pane3x9:
+  title: '菜单'
+  layout:
+    - '========='
+    - '=       ='
+    - '========[CLOSE]'
+  
+  items:
+    =:
+      repo: PLACEHOLDER_BLACK_GLASS_PANE
+    CLOSE:
+      repo: QUIT_MENU_ARROW
 hub-main-menu:
   type: INJECT
   items:
@@ -124,7 +138,7 @@ test:
               name: '你是OP啊啊'
             - material: DIAMOND_SWORD
               name: '你是OP啊啊'
-              ```
+```
 model.yml
 ```
 point:
@@ -160,4 +174,4 @@ point:
             return result;
         }
       '
-      ```
+```
