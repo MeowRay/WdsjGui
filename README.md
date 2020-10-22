@@ -22,6 +22,18 @@ bungeecord: all
 ## 配置
 ### config.yml
 ```
+model-pane3x9:
+  title: '菜单'
+  layout:
+    - '========='
+    - '=       ='
+    - '========[CLOSE]'
+  
+  items:
+    =:
+      repo: PLACEHOLDER_BLACK_GLASS_PANE
+    CLOSE:
+      repo: QUIT_MENU_ARROW
 hub-main-menu:
   type: INJECT
   items:
