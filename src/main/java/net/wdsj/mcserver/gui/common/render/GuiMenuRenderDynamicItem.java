@@ -1,6 +1,8 @@
 package net.wdsj.mcserver.gui.common.render;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
+import net.wdsj.servercore.common.IteratorCycle;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -16,9 +18,10 @@ public class GuiMenuRenderDynamicItem<Handler, Item> extends GuiMenuRenderItem<H
     private final int interval;
     private final RenderItem<Handler, Item>[] renderItems;
 
-    private Iterator<RenderItem<Handler, Item>> renderItemIterator;
+    private IteratorCycle<RenderItem<Handler, Item>> renderItemIteratorCycle;
 
 
+    @SafeVarargs
     public GuiMenuRenderDynamicItem(int interval, RenderItem<Handler, Item>... renderItems) {
         super(renderItems[0]);
         if (interval <= 0) {
@@ -26,20 +29,21 @@ public class GuiMenuRenderDynamicItem<Handler, Item> extends GuiMenuRenderItem<H
         } else {
             this.interval = interval % 2 != 0 ? interval + 1 : interval;
         }
+
         this.renderItems = renderItems;
-        newIterator();
+        if (renderItems.length > 1) {
+            this.renderItemIteratorCycle = new IteratorCycle<>(Lists.newArrayList(renderItems));
+        }
+
     }
 
     @Override
     public RenderItem<Handler, Item> getRenderItem(long serverTick) {
-        if (renderItemIterator == null || interval == 0) {
+        if (renderItemIteratorCycle == null || interval == 0) {
             renderItem = renderItems[0];
         } else {
             if (renderItem == null || serverTick % interval == 0) {
-                if (!renderItemIterator.hasNext()) {
-                    newIterator();
-                }
-                renderItem = renderItemIterator.next();
+                return renderItemIteratorCycle.getNext();
             }
         }
         return renderItem;
@@ -47,7 +51,7 @@ public class GuiMenuRenderDynamicItem<Handler, Item> extends GuiMenuRenderItem<H
 
 
     public void newIterator() {
-        renderItemIterator = Arrays.stream(renderItems).iterator();
+        renderItemIteratorCycle.newIterator();
     }
 
 }
