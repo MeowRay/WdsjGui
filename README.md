@@ -156,8 +156,6 @@ point:
       - 'js:
         main();
         function main(){
-            var reason = "$reason";
-            var doneClose = "$doneClose";
             var servers = "$server".split(",");
             var result = false;
             handler.sendMessage("单价是: $price reason: " + reason);
