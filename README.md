@@ -16,8 +16,10 @@ bungeecord: all
 * 忘了
 
 ## 演示
-
-![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/blob/main/demo.gif)
+Menu:
+![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/demo.gif)
+Sign:
+![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/SIGN.gif)
 
 ## 配置
 ### config.yml
