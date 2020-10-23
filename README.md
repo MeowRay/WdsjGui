@@ -17,10 +17,10 @@ bungeecord: all
 
 ## 演示
 
-Menu:
+### Menu:
 ![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/demo.gif)
 
-Sign:
+### Sign:
 ![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/SIGN.gif)
 
 ## 配置
