@@ -2,10 +2,7 @@ package net.wdsj.mcserver.gui.common;
 
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import net.wdsj.common.simpleconfig.ConfigurationSection;
@@ -22,7 +19,6 @@ import net.wdsj.mcserver.gui.common.executor.GuiItemExecutorCollection;
 import net.wdsj.mcserver.gui.common.item.GuiItem;
 import net.wdsj.mcserver.gui.common.item.GuiItemBase;
 import net.wdsj.mcserver.gui.common.repo.GuiItemRepository;
-import net.wdsj.mcserver.gui.common.utils.tran.MapArgTrans;
 import net.wdsj.mcserver.gui.common.utils.MenuUtils;
 import net.wdsj.mcserver.gui.common.wrapper.GuiMenuConfigWrapper;
 import net.wdsj.mcserver.gui.common.wrapper.GuiSignConfigWrapper;
@@ -32,7 +28,6 @@ import net.wdsj.servercore.database.frame.box.value.bytes.ymal.DatabaseBytesConf
 import net.wdsj.servercore.eunm.inventory.InventoryAction;
 import net.wdsj.servercore.utils.ArrayUtils;
 import net.wdsj.servercore.utils.ReflectionUtils;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -154,13 +149,14 @@ public class GuiConfigManager {
             if (originConfig.getDisplay().isEmpty() && !modelConfig.getDisplay().isEmpty()) {
                 originConfig.getDisplay().addAll(modelConfig.getDisplay());
             }
-            if (originConfig.getOptions().get("OVERRIDE_ACTION") == null) {
+
+            if (!originConfig.getOptions().containsKey("OVERRIDE_ACTION")) {
                 for (Map.Entry<String, ArrayList<String>> entry : modelConfig.getAction().entrySet()) {
                     List<String> strings = originConfig.getAction().get(entry.getKey());
                     strings.addAll(0, entry.getValue());
                     originConfig.getAction().put(entry.getKey(), strings);
-                    originConfig.getOptions().put("OVERRIDE_ACTION", "true");
                 }
+                originConfig.getOptions().put("OVERRIDE_ACTION", true);
             }
             for (String arg : modelConfig.getRequirementArgs()) {
                 if (!originConfig.getArgs().containsKey(arg)) {

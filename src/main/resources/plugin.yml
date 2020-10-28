@@ -1,4 +1,4 @@
-name: ${project.name}
+name: WdsjGui
 version: ${project.version}
 main: net.wdsj.mcserver.gui.bukkit.GuiBukkit
 api-version: 1.16
