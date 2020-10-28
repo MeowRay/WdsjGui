@@ -5,7 +5,7 @@
 spigot: 1.7-1.16
 bungeecord: all
 
-**仅供学习使用!**
+**仅供学习使用!禁止商用,如二次开发需注明出处**
 
 服务器: wdsj.net
 
@@ -17,7 +17,11 @@ bungeecord: all
 
 ## 演示
 
-![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/blob/main/demo.gif)
+### Menu:
+![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/demo.gif)
+
+### Sign:
+![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/SIGN.gif)
 
 ## 配置
 ### config.yml
