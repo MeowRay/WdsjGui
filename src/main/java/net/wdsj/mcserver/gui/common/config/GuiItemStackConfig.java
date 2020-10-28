@@ -8,6 +8,7 @@ import net.wdsj.servercore.common.placeholder.PlaceholderManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Arthur
@@ -55,12 +56,11 @@ public class GuiItemStackConfig {
             if (skin != null)
                 skin = PlaceholderManager.replace(handler, skin.replace(foo, entry.getValue()));
             if (lore != null)
-                itemStackConfig.setLore(Lists.transform(lore, s -> s.replace(foo, entry.getValue())));
+                lore = lore.stream().map(s -> s.replace(foo, entry.getValue())).collect(Collectors.toList());
             if (enchant != null)
-                itemStackConfig.setEnchant(Lists.transform(enchant, s -> s.replace(foo, entry.getValue())));
+                enchant = enchant.stream().map(s -> s.replace(foo, entry.getValue())).collect(Collectors.toList());
             if (flag != null)
-                itemStackConfig.setFlag(Lists.transform(flag, s -> s.replace(foo, entry.getValue())));
-
+                flag = flag.stream().map(s -> s.replace(foo, entry.getValue())).collect(Collectors.toList());
         }
         itemStackConfig.setId(id == null ? null : Integer.parseInt(id));
         itemStackConfig.setMaterial(material == null ? null : material);

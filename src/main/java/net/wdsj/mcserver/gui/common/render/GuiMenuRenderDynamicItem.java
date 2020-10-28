@@ -43,7 +43,7 @@ public class GuiMenuRenderDynamicItem<Handler, Item> extends GuiMenuRenderItem<H
             renderItem = renderItems[0];
         } else {
             if (renderItem == null || serverTick % interval == 0) {
-                return renderItemIteratorCycle.getNext();
+                renderItem =  renderItemIteratorCycle.getNext();
             }
         }
         return renderItem;
