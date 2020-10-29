@@ -9,6 +9,8 @@ bungeecord: all
 
 服务器: wdsj.net
 
+支持各种自定义模板，传参，灵活应用轻松制作商店等等功能
+
 ## 特性
 * 继承
 * 模板
@@ -19,6 +21,9 @@ bungeecord: all
 
 ### Menu:
 ![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/demo.gif)
+
+### Item:
+![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/blob/main/ITEM.gif)
 
 ### Sign:
 ![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/SIGN.gif)
@@ -62,14 +67,13 @@ hub-main-menu:
             - '§7点击查看当前游戏成就'
       action:
         left:
-          - 'cmd:player:cj'
-test:
+          - 'cmd:player:cj'test:
   title: 'DEMO MENU :)'
   parent: model-pane3x9
   type: INHERIT
   layout:
     - ''
-    - '    B CA'
+    - '    BDCA'
     - ''
   construct: '
     if(player.isOp()){
@@ -124,6 +128,32 @@ test:
       args:
         price: '10'
         reason: '购买草方块'
+    D:
+      update: 5
+      model: 'item'
+      display:
+        - material: STONE
+          name: '§e$reason'
+          lore:
+            - '§clore1'
+            - '§e现在的时间是: %localtime_time_yyyy-MM-dd-HH:mm:ss%'
+        - material: STONE
+          enchant:
+            - DAMAGE_ALL:1
+          name: '§e$reason'
+          lore:
+            - '§clore2'
+            - '§e现在的时间是: %localtime_time_yyyy-MM-dd-HH:mm:ss%'
+      action:
+        left:
+          - 'cmd:console:give %player_name% STONE 1'
+      args:
+        priceDisplay: "§e需要 {price}"
+        items:
+          - material: GRASS_BLOCK
+            amount: 1
+            lore: 'LORE需要叫艹的才行哟~'
+        reason: '购买石头'
     TTTT:
       update: 5
       slot:
@@ -154,7 +184,7 @@ point:
   args:
     reason: ''
     server: ''
-    doneClose: 'true'
+    doneClose: true
   action:
     left:
       - 'js:
@@ -169,7 +199,68 @@ point:
             } else {
                 handler.spigot().sendMessage(Java.type("net.wdsj.servercore.message.ServerMessages$Component").TAKE_POINT_FAIL);
             }
-            if (doneClose === "true"){
+            if (doneClose){
+                guimanager.static.close(handler);
+            }
+
+            return result;
+        }
+      '
+item:
+  display:
+    - material: STONE
+  requirement-args:
+    - reason
+    - items
+    - number
+    - priceDisplay
+  args:
+    reason: ''
+    server: ''
+    number: 1
+    doneClose: 'true'
+    priceDisplay: '§6{price}'
+  initScript:
+    - '
+   init();
+   function init(){
+       print(items);
+       var itemHandler = eco.getEcoHandler("ITEM");
+       if(itemHandler!=null){
+         var data = eco.createEcoData(itemHandler, utils.createSectionByList(items,"items"));
+         print(data);
+       }
+
+       if(data !=null ){
+         for each (var el in render.getDisplay()){
+           el.getLore().add(priceDisplay.replace("{price}",data.getPriceDisplay() ));
+         }
+
+         options.put("BUY_ITEM_MODEL_DATA", data);
+      }
+   }
+
+    '
+  action:
+    left:
+      - 'js:
+        main();
+        function main(){
+            var data = options.get("BUY_ITEM_MODEL_DATA");
+
+           var itemHandler = eco.getEcoHandler("ITEM");
+           if(data == null){
+             handler.sendMessage("系统错误！请联系腐竹~");
+             return false;
+           }
+            var result = false;
+            if (eco.take(handler.getName(),itemHandler,data,1,null,reason)){
+                title.sendTitles(handler, "§a§l购买成功");
+                result = true;
+            } else {
+                title.sendTitles(handler, "§c§l物资不足" , "§6你需要: "+data.getPriceDisplay());
+            }
+            if (doneClose){
                 guimanager.static.close(handler);
             }
 
