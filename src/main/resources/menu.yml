@@ -1,35 +1,10 @@
-hub-main-menu:
-  type: INJECT
-  items:
-    39:
-      slot:
-        - 39
-      display:
-        - material: BOOK
-          name: §3游戏任务
-          lore:
-            - '§7点击查看当前游戏任务'
-      action:
-        left:
-          - 'cmd:player:rw'
-    40:
-      slot:
-        - 40
-      display:
-        - material: EXPERIENCE_BOTTLE
-          name: §3游戏成就
-          lore:
-            - '§7点击查看当前游戏成就'
-      action:
-        left:
-          - 'cmd:player:cj'
 test:
   title: 'DEMO MENU :)'
   parent: model-pane3x9
   type: INHERIT
   layout:
     - ''
-    - '    B CA'
+    - '    BDCA'
     - ''
   construct: '
     if(player.isOp()){
@@ -84,6 +59,32 @@ test:
       args:
         price: '10'
         reason: '购买草方块'
+    D:
+      update: 5
+      model: 'item'
+      display:
+        - material: STONE
+          name: '§e$reason'
+          lore:
+            - '§clore1'
+            - '§e现在的时间是: %localtime_time_yyyy-MM-dd-HH:mm:ss%'
+        - material: STONE
+          enchant:
+            - DAMAGE_ALL:1
+          name: '§e$reason'
+          lore:
+            - '§clore2'
+            - '§e现在的时间是: %localtime_time_yyyy-MM-dd-HH:mm:ss%'
+      action:
+        left:
+          - 'cmd:console:give %player_name% STONE 1'
+      args:
+        priceDisplay: "§e需要 {price}"
+        items:
+          - material: GRASS_BLOCK
+            amount: 1
+            lore: 'LORE需要叫艹的才行哟~'
+        reason: '购买石头'
     TTTT:
       update: 5
       slot:

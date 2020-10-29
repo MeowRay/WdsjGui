@@ -1,31 +1,27 @@
-package net.wdsj.mcserver.gui.common.config;
+package net.wdsj.mcserver.gui.common.config
 
-import lombok.Getter;
-import net.wdsj.servercore.config.invoke.annotation.ListInvoke;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.Getter
+import java.util.HashMap
+import net.wdsj.servercore.config.invoke.annotation.ListInvoke
+import net.wdsj.mcserver.gui.common.config.GuiItemStackConfig
+import java.util.ArrayList
 
 /**
  * @author Arthur
  * @version 1.0
  * @date 2018/8/27 21:14
  */
-@Getter
-public class GuiItemModelRenderConfig {
+data class GuiItemModelRenderConfig (
 
-    private int update = -1;
-
-    private Map<String, Object> args = new HashMap<>();
-
-    private List<String> requirementArgs = new ArrayList<>();
+    var update: Int = -1,
+    var args: Map<String, Any> = HashMap(),
+    var requirementArgs: List<String> = ArrayList(),
 
     @ListInvoke
-    private List<GuiItemStackConfig> display = new ArrayList<>();
+    var display: List<GuiItemStackConfig> = ArrayList(),
+    var action: Map<String, ArrayList<String>> = HashMap(),
 
-    private Map<String, ArrayList<String>> action = new HashMap<>();
 
+    var initScript: List<String> = ArrayList(),
 
-}
+)

@@ -1,8 +1,10 @@
 package net.wdsj.mcserver.gui.common;
 
 import com.google.common.base.Enums;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import net.wdsj.common.simpleconfig.ConfigurationSection;
@@ -28,8 +30,11 @@ import net.wdsj.servercore.database.frame.box.value.bytes.ymal.DatabaseBytesConf
 import net.wdsj.servercore.eunm.inventory.InventoryAction;
 import net.wdsj.servercore.utils.ArrayUtils;
 import net.wdsj.servercore.utils.ReflectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 /**
@@ -150,14 +155,18 @@ public class GuiConfigManager {
                 originConfig.getDisplay().addAll(modelConfig.getDisplay());
             }
 
-            if (!originConfig.getOptions().containsKey("OVERRIDE_ACTION")) {
+            if (!originConfig.getOptions().containsKey("OVERRIDE_MODEL")) {
                 for (Map.Entry<String, ArrayList<String>> entry : modelConfig.getAction().entrySet()) {
                     List<String> strings = originConfig.getAction().get(entry.getKey());
                     strings.addAll(0, entry.getValue());
                     originConfig.getAction().put(entry.getKey(), strings);
                 }
-                originConfig.getOptions().put("OVERRIDE_ACTION", true);
+                if (!modelConfig.getInitScript().isEmpty()) {
+                    originConfig.getInitScript().addAll(modelConfig.getInitScript());
+                }
+                originConfig.getOptions().put("OVERRIDE_MODEL", true);
             }
+
             for (String arg : modelConfig.getRequirementArgs()) {
                 if (!originConfig.getArgs().containsKey(arg)) {
                     throw new RuntimeException(String.format("Arg '%s' is require", arg));
@@ -165,7 +174,6 @@ public class GuiConfigManager {
             }
         }
     }
-
     public static void addItemModelRenderConfig(String key, GuiItemModelRenderConfig config) {
         itemModelMap.put(key, config);
     }
@@ -249,12 +257,12 @@ public class GuiConfigManager {
 
         }
         for (GuiItem<?, ?> item : items) {
-            setGuiItemAction(item, config.getAction() , config.getArgs());
+            setGuiItemAction(item, config.getAction(), config.getArgs());
         }
         return items;
     }
 
-    public static <H, I> GuiItem<H, I> setGuiItemAction(GuiItem<H, I> guiItem, Map<String, List<String>> actionMap , Map<String, Object> argsMap) {
+    public static <H, I> GuiItem<H, I> setGuiItemAction(GuiItem<H, I> guiItem, Map<String, List<String>> actionMap, Map<String, Object> argsMap) {
         if (guiItem instanceof GuiItemBase) {
             GuiItemBase<H, I> guiItemBase = (GuiItemBase<H, I>) guiItem;
             for (Map.Entry<String, List<String>> entry : actionMap.entrySet()) {
@@ -264,7 +272,7 @@ public class GuiConfigManager {
                     List<String> value = entry.getValue();
                     GuiItemExecutorCollection<H> executorCollection = new GuiItemExecutorCollection<>();
                     for (String s : value) {
-                        Optional<GuiItemExecutor<Object>> guiItemExecutor = getGuiItemExecutorCreator(s , argsMap);
+                        Optional<GuiItemExecutor<Object>> guiItemExecutor = getGuiItemExecutorCreator(s, argsMap);
                         if (guiItemExecutor.isPresent()) {
                             executorCollection.addExecutor((GuiItemExecutor<H>) guiItemExecutor.get());
                         }
@@ -276,12 +284,12 @@ public class GuiConfigManager {
         return guiItem;
     }
 
-    public static <Handler> Optional<GuiItemExecutor<Handler>> getGuiItemExecutorCreator(String text , Map<String, Object> argsMap) {
+    public static <Handler> Optional<GuiItemExecutor<Handler>> getGuiItemExecutorCreator(String text, Map<String, Object> argsMap) {
         String[] split = text.split(":", 2);
         GuiItemExecutorCreator<?> actionCreator = getMenuExecutorCreator(split[0]);
         if (actionCreator != null) {
             String s = ArrayUtils.get(split, 1);
-            return Optional.of((GuiItemExecutor<Handler>) actionCreator.create(s , argsMap));
+            return Optional.of((GuiItemExecutor<Handler>) actionCreator.create(s, argsMap));
         }
         return Optional.absent();
     }

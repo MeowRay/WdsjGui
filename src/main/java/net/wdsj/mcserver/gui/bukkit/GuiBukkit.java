@@ -7,6 +7,7 @@ import mc233.cn.wdsjlib.bukkit.WdsjLib;
 import mc233.cn.wdsjlib.bukkit.api.wrapper.SoundWrapper;
 import mc233.cn.wdsjlib.bukkit.utils.BukkitUtils;
 import mc233.cn.wdsjlib.global.api.eco.EcoAPI;
+import mc233.cn.wdsjlib.global.config.ItemStackConfig;
 import net.wdsj.mcserver.gui.bukkit.command.GuiAdminCommand;
 import net.wdsj.mcserver.gui.bukkit.command.GuiPlayerCommand;
 import net.wdsj.mcserver.gui.bukkit.creator.GuiItemBukkitConfigCreator;
@@ -19,9 +20,11 @@ import net.wdsj.mcserver.gui.common.creator.GuiSignExecutorCreator;
 import net.wdsj.mcserver.gui.common.executor.GuiItemCommonOpenExecutor;
 import net.wdsj.mcserver.gui.common.executor.GuiItemExecutor;
 import net.wdsj.mcserver.gui.common.utils.MenuUtils;
+import net.wdsj.mcserver.gui.common.utils.Utils;
 import net.wdsj.servercore.WdsjServerAPI;
 import net.wdsj.servercore.common.command.CommandProxyBuilder;
 import net.wdsj.servercore.compatible.XSound;
+import net.wdsj.servercore.config.invoke.ConfigInvoke;
 import net.wdsj.servercore.protocol.ProtocolVersion;
 import net.wdsj.servercore.utils.ArrayUtils;
 import org.bukkit.Bukkit;
@@ -93,9 +96,12 @@ public final class GuiBukkit extends JavaPlugin {
 
         Bukkit.getScheduler().runTaskLater(this , ()->{
             MenuUtils.putScriptObject("eco" , EcoAPI.getInstance());
-            MenuUtils.putScriptObject("guimanager", GuiManager.class);
             MenuUtils.putScriptObject("title" , WdsjLib.getInstance().getTitleAPI());
             MenuUtils.putScriptObject("bossbar" , WdsjLib.getInstance().getBossBarAPI());
+
+            MenuUtils.putScriptObject("guimanager", GuiManager.class);
+            MenuUtils.putScriptObject("utils", Utils.INSTANCE);
+            MenuUtils.putScriptObject("itemconfig" , ItemStackConfig.class);
         } , 20);
 
     }

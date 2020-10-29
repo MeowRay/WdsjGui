@@ -10,6 +10,9 @@ import net.wdsj.servercore.utils.ScriptUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 
+import javax.script.Bindings;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +76,6 @@ public class MenuUtils {
         }
         return map;
     }
-
 
     public static String replace(String text, Map<String, String> map) {
         for (Map.Entry<String, String> entry : map.entrySet()) {

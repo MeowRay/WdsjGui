@@ -79,7 +79,6 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
             }
             value.init();
             value.setAction(Maps.transformValues(value.getAction(), strings -> Lists.transform(strings, new MapArgTrans(value.getStringArgs()))));
-            System.out.println(value.getOptions());
         }
 
     }
