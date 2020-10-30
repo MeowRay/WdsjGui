@@ -69,7 +69,7 @@ hub-main-menu:
         left:
           - 'cmd:player:cj'test:
   title: 'DEMO MENU :)'
-  parent: model-pane3x9
+  parent: model-pane3x9 //这里继承了3x9的model～～～～～～～～～
   type: INHERIT
   layout:
     - ''
@@ -110,7 +110,7 @@ hub-main-menu:
           - 'cmd:console:say hello'
     B:
       update: 5
-      model: 'point'
+      model: 'point' //使用point model ～～～～～～～～～～～
       display:
         - material: GRASS_BLOCK
           name: '§eBUY A GRASS BLOCK $price$'
@@ -130,7 +130,7 @@ hub-main-menu:
         reason: '购买草方块'
     D:
       update: 5
-      model: 'item'
+      model: 'item' // 使用 item model ，来实现以物品为价格购买～～～～～～～～～～～～～～
       display:
         - material: STONE
           name: '§e$reason'
@@ -148,7 +148,7 @@ hub-main-menu:
         left:
           - 'cmd:console:give %player_name% STONE 1'
       args:
-        priceDisplay: "§e需要 {price}"
+        priceDisplay: "§e需要 {price}" // 传餐，override model arg～～～～～～～～～
         items:
           - material: GRASS_BLOCK
             amount: 1
@@ -173,7 +173,7 @@ hub-main-menu:
             - material: DIAMOND_SWORD
               name: '你是OP啊啊'
 ```
-model.yml
+### model.yml
 ```
 point:
   display:
@@ -219,7 +219,7 @@ item:
     server: ''
     number: 1
     doneClose: 'true'
-    priceDisplay: '§6{price}'
+    priceDisplay: '§6{price}' // 默认
   initScript:
     - '
    init();
