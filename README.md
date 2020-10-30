@@ -28,6 +28,9 @@ bungeecord: all
 ### Sign:
 ![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/SIGN.gif)
 
+### Container:
+![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/demo3.png)
+
 ## 配置
 ### config.yml
 ```
