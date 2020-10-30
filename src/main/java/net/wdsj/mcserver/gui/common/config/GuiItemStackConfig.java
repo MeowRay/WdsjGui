@@ -35,33 +35,34 @@ public class GuiItemStackConfig {
 
     //TODO SHIT
     public ItemStackConfig build(Object handler, Map<String, String> map) {
-       // System.out.printf(" debug > material: %s name: %s lore: %s%n", material, name, ArrayUtils.toString(lore));
+        // System.out.printf(" debug > material: %s name: %s lore: %s%n", material, name, ArrayUtils.toString(lore));
         ItemStackConfig itemStackConfig = new ItemStackConfig();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            String foo = "$" + entry.getKey();
-            if (id != null)
-                id = id.replace(foo, entry.getValue());
-            if (material != null)
-                material = material.replace(foo, entry.getValue());
-            if (durability != null)
-                durability = durability.replace(foo, entry.getValue());
-            if (amount != null)
-                amount = amount.replace(foo, entry.getValue());
-            if (name != null)
-                name = name.replace(foo, entry.getValue());
-            if (head != null)
-                head = PlaceholderManager.replace(handler, head.replace(foo, entry.getValue()));
-            if (house != null)
-                house = house.replace(foo, entry.getValue());
-            if (skin != null)
-                skin = PlaceholderManager.replace(handler, skin.replace(foo, entry.getValue()));
-            if (lore != null)
-                lore = lore.stream().map(s -> s.replace(foo, entry.getValue())).collect(Collectors.toList());
-            if (enchant != null)
-                enchant = enchant.stream().map(s -> s.replace(foo, entry.getValue())).collect(Collectors.toList());
-            if (flag != null)
-                flag = flag.stream().map(s -> s.replace(foo, entry.getValue())).collect(Collectors.toList());
-        }
+        if (map != null)
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                String foo = "$" + entry.getKey();
+                if (id != null)
+                    id = id.replace(foo, entry.getValue());
+                if (material != null)
+                    material = material.replace(foo, entry.getValue());
+                if (durability != null)
+                    durability = durability.replace(foo, entry.getValue());
+                if (amount != null)
+                    amount = amount.replace(foo, entry.getValue());
+                if (name != null)
+                    name = name.replace(foo, entry.getValue());
+                if (head != null)
+                    head = PlaceholderManager.replace(handler, head.replace(foo, entry.getValue()));
+                if (house != null)
+                    house = house.replace(foo, entry.getValue());
+                if (skin != null)
+                    skin = PlaceholderManager.replace(handler, skin.replace(foo, entry.getValue()));
+                if (lore != null)
+                    lore = lore.stream().map(s -> s.replace(foo, entry.getValue())).collect(Collectors.toList());
+                if (enchant != null)
+                    enchant = enchant.stream().map(s -> s.replace(foo, entry.getValue())).collect(Collectors.toList());
+                if (flag != null)
+                    flag = flag.stream().map(s -> s.replace(foo, entry.getValue())).collect(Collectors.toList());
+            }
         itemStackConfig.setId(id == null ? null : Integer.parseInt(id));
         itemStackConfig.setMaterial(material == null ? null : material);
         itemStackConfig.setDurability(durability == null ? null : Integer.parseInt(durability));

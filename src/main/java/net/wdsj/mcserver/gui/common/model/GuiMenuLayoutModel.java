@@ -26,8 +26,8 @@ public class GuiMenuLayoutModel<Handler, Item> implements GuiMenuModel<Handler, 
     private final String[] lines;
     private final TIntObjectHashMap<String[]> boxMap = new TIntObjectHashMap<>();
     private final int length;
+    private final    TIntObjectHashMap<String>      layoutMap;
 
-    private List<GuiMenuRenderItem<Handler, Item>> renderCache;
 
     private final Map<String, GuiItemRenderBuilder<Handler, Item>> itemMap = new THashMap<>();
 
@@ -47,6 +47,7 @@ public class GuiMenuLayoutModel<Handler, Item> implements GuiMenuModel<Handler, 
             String[] foos = MenuUtils.getFoo(line);
             boxMap.put(i, foos);
         }
+        layoutMap = MenuUtils.getLayoutMap(boxMap, length);
     }
 
     public GuiMenuLayoutModel(String title, String layout) {
@@ -54,12 +55,10 @@ public class GuiMenuLayoutModel<Handler, Item> implements GuiMenuModel<Handler, 
     }
 
     public void registerPlaceholder(String foo, GuiItemRenderBuilder<Handler, Item> renderBuilder) {
-        renderCache = null;
         itemMap.put(foo, renderBuilder);
     }
 
     public void unregisterPlaceholder(String foo) {
-        renderCache = null;
         itemMap.remove(foo);
     }
 
@@ -85,18 +84,18 @@ public class GuiMenuLayoutModel<Handler, Item> implements GuiMenuModel<Handler, 
 
     @Override
     public List<GuiMenuRenderItem<Handler, Item>> getRenderItems(Handler handler) {
-        if (renderCache == null) {
-            List<GuiMenuRenderItem<Handler, Item>> list = new ArrayList<>();
-            TIntObjectHashMap<String> layoutMap = MenuUtils.getLayoutMap(boxMap, length);
-            for (int slot : layoutMap.keys()) {
-                GuiItemRenderBuilder<Handler, Item> placeholder = getPlaceholder(layoutMap.get(slot));
-                if (placeholder != null) {
-                    list.add(placeholder.build(slot));
-                }
+        return getRenderItems(handler, itemMap);
+    }
+
+    public List<GuiMenuRenderItem<Handler, Item>> getRenderItems(Handler handler, Map<String, GuiItemRenderBuilder<Handler, Item>> itemMap) {
+        List<GuiMenuRenderItem<Handler, Item>> list = new ArrayList<>();
+        for (int slot : layoutMap.keys()) {
+            GuiItemRenderBuilder<Handler, Item> placeholder = itemMap.get(layoutMap.get(slot));
+            if (placeholder != null) {
+                list.add(placeholder.build(slot));
             }
-            renderCache = list;
         }
-        return renderCache;
+        return list;
     }
 
     @Override

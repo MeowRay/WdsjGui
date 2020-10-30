@@ -27,6 +27,7 @@ import net.wdsj.servercore.compatible.XSound;
 import net.wdsj.servercore.config.invoke.ConfigInvoke;
 import net.wdsj.servercore.protocol.ProtocolVersion;
 import net.wdsj.servercore.utils.ArrayUtils;
+import net.wdsj.servercore.utils.ThreadUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -90,19 +91,21 @@ public final class GuiBukkit extends JavaPlugin {
         //SIGN CREATOR
         GuiConfigManager.registerSignExecutorCreator("command", (GuiSignExecutorCreator<Player>) args -> new GuiSignBukkitCommandExecutor(args, false));
 
+        MenuUtils.putScriptObject("eco" , EcoAPI.getInstance());
+        MenuUtils.putScriptObject("title" , WdsjLib.getInstance().getTitleAPI());
+        MenuUtils.putScriptObject("bossbar" , WdsjLib.getInstance().getBossBarAPI());
+
+        MenuUtils.putScriptObject("guimanager", GuiManager.class);
+        MenuUtils.putScriptObject("utils", Utils.INSTANCE);
+        MenuUtils.putScriptObject("itemconfig" , ItemStackConfig.class);
+
         GuiConfigManager.init();
+
         GuiManager.setGuiMenuFunction((GuiMenuFunction<Player>) this::close);
 
 
-        Bukkit.getScheduler().runTaskLater(this , ()->{
-            MenuUtils.putScriptObject("eco" , EcoAPI.getInstance());
-            MenuUtils.putScriptObject("title" , WdsjLib.getInstance().getTitleAPI());
-            MenuUtils.putScriptObject("bossbar" , WdsjLib.getInstance().getBossBarAPI());
-
-            MenuUtils.putScriptObject("guimanager", GuiManager.class);
-            MenuUtils.putScriptObject("utils", Utils.INSTANCE);
-            MenuUtils.putScriptObject("itemconfig" , ItemStackConfig.class);
-        } , 20);
+    //   Bukkit.getScheduler().runTaskLater(this , ()->{
+    //   } , 20);
 
     }
 

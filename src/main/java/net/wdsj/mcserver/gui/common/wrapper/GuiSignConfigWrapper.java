@@ -50,7 +50,7 @@ public class GuiSignConfigWrapper implements GuiRequirementOpen {
                     }
                     return guiSignExecutor;
                 }
-                throw new GuiSignExecutorCreatorNotFoundException();
+                throw new GuiSignExecutorCreatorNotFoundException(config.getType());
             }
         };
     }

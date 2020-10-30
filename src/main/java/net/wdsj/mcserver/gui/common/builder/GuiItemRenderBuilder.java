@@ -6,8 +6,10 @@ import net.wdsj.mcserver.gui.common.render.GuiMenuRenderDynamicItem;
 import net.wdsj.mcserver.gui.common.render.GuiMenuRenderItem;
 import net.wdsj.mcserver.gui.common.render.RenderItem;
 import net.wdsj.servercore.common.IteratorCycle;
+import org.apache.commons.lang.ArrayUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**

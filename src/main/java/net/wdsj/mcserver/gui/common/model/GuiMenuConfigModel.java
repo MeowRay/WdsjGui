@@ -7,6 +7,7 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import javafx.util.Pair;
 import com.google.common.base.Strings;
+import net.wdsj.mcserver.gui.common.container.GuiMenuItemContainer;
 import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu;
 import net.wdsj.mcserver.gui.common.GuiConfigManager;
 import net.wdsj.mcserver.gui.common.utils.tran.MapArgTrans;
@@ -35,10 +36,12 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
 
 
     private final GuiMenuMainConfig menuConfig;
+    private GuiMenuLayoutModel<Handler, Item> layoutModel;
     private InventoryType type;
     private final String title;
 
     private final GuiMenuConfigModel<Handler, Item> parentModel;
+    private final Map<GuiMenuItemContainer<Handler, Item> , List<GuiItemRenderConfig>> containerMap = new HashMap<>();
 
     public GuiMenuConfigModel(GuiMenuMainConfig menuConfig) {
         this.menuConfig = menuConfig;
@@ -67,14 +70,19 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
         } else if (parentModel != null && parentModel.title != null) {
             title = parentModel.title;
         } else {
-            title = "no define";
+            title = "NO DEFINE!";
         }
 
+        if (!menuConfig.getLayout().isEmpty()) {
+            layoutModel = new GuiMenuLayoutModel<>(menuConfig.getTitle(), menuConfig.getLayout().toArray(new String[0]));
+        }
 
-
+        for (Map.Entry<String, GuiMenuMainConfig.Container> entry : menuConfig.getContainer().entrySet()) {
+            containerMap.put(GuiMenuItemContainer.parse(entry.getValue().getRange()), entry.getValue().getItems());
+        }
         for (Map.Entry<String, GuiItemRenderConfig> entry : menuConfig.getItems().entrySet()) {
             GuiItemRenderConfig value = entry.getValue();
-            if (value.getModel() != null){
+            if (value.getModel() != null) {
                 GuiConfigManager.setMergeModelRenderConfig(value.getModel(), value);
             }
             value.init();
@@ -146,16 +154,26 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
             }
         }
 
+        for (Map.Entry<GuiMenuItemContainer<Handler, Item>, List<GuiItemRenderConfig>> entry : containerMap.entrySet()) {
+            List<GuiItemRenderConfig> value = entry.getValue();
+            GuiMenuItemContainer<Handler, Item> container = entry.getKey().clone();
+            for (GuiItemRenderConfig config : value) {
+                List<GuiItem<?, ?>> guiItem = GuiConfigManager.getGuiItemRender(handler, config);
+                if (guiItem.size() == 1) {
+                    container.addItem( new GuiItemRenderBuilder<>((GuiItem<Handler, Item>) guiItem.get(0)));
+                } else {
+                    container.addItem( new GuiItemRenderBuilder<>(config.getUpdate(), Lists.transform(guiItem, guiItem12 -> (GuiItem<Handler, Item>) guiItem12)));
+                }
+            }
+            list.addAll(container.getRenderItems());
+        }
+
         if (parentModel != null) {
             list.addAll(parentModel.getRenderItems(handler));
         }
 
-        if (!menuConfig.getLayout().isEmpty()) {
-            GuiMenuLayoutModel<Handler, Item> layoutModel = new GuiMenuLayoutModel<>(menuConfig.getTitle(), menuConfig.getLayout().toArray(new String[0]));
-            for (Map.Entry<String, GuiItemRenderBuilder<Handler, Item>> entry : fooGuiItemMap.entrySet()) {
-                layoutModel.registerPlaceholder(entry.getKey(), entry.getValue());
-            }
-            list.addAll(layoutModel.getRenderItems(handler));
+        if (layoutModel != null) {
+            list.addAll(layoutModel.getRenderItems(handler, fooGuiItemMap));
         }
 
         for (Map.Entry<String, GuiMenuRenderItem<Handler, Item>> entry : staticGuiItemMap.entrySet()) {

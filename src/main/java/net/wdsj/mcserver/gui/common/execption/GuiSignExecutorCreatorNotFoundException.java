@@ -7,8 +7,8 @@ package net.wdsj.mcserver.gui.common.execption;
  */
 public class GuiSignExecutorCreatorNotFoundException extends NullPointerException {
 
-    public GuiSignExecutorCreatorNotFoundException() {
-        super("找不到Sign creator!");
+    public GuiSignExecutorCreatorNotFoundException(String type) {
+        super(String.format("Can't found sign '%s' creator!", type));
     }
 
 }

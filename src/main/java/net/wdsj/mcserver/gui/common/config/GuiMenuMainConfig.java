@@ -1,6 +1,7 @@
 package net.wdsj.mcserver.gui.common.config;
 
 import lombok.Getter;
+import net.wdsj.servercore.config.invoke.annotation.ListInvoke;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,11 +30,23 @@ public class GuiMenuMainConfig {
     private List<String> openAction = new ArrayList<>();
     private List<String> closeAction = new ArrayList<>();
 
+    private Map<String, Container> container = new HashMap<>();
+
     private Map<String, GuiItemRenderConfig> items = new HashMap<>();
+
 
 
     public boolean isInherit() {
         return "INHERIT".equals(type);
+    }
+
+    @Getter
+    public static class Container{
+
+        private String range;
+        @ListInvoke
+        private List<GuiItemRenderConfig> items = new ArrayList<>();
+
     }
 
 }

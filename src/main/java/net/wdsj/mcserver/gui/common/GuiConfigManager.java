@@ -1,10 +1,8 @@
 package net.wdsj.mcserver.gui.common;
 
 import com.google.common.base.Enums;
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import net.wdsj.common.simpleconfig.ConfigurationSection;
@@ -16,6 +14,7 @@ import net.wdsj.mcserver.gui.common.config.GuiItemStackConfig;
 import net.wdsj.mcserver.gui.common.creator.GuiItemConfigCreator;
 import net.wdsj.mcserver.gui.common.creator.GuiItemExecutorCreator;
 import net.wdsj.mcserver.gui.common.creator.GuiSignExecutorCreator;
+import net.wdsj.mcserver.gui.common.execption.GuiItemCreatorNotFoundException;
 import net.wdsj.mcserver.gui.common.executor.GuiItemExecutor;
 import net.wdsj.mcserver.gui.common.executor.GuiItemExecutorCollection;
 import net.wdsj.mcserver.gui.common.item.GuiItem;
@@ -30,11 +29,8 @@ import net.wdsj.servercore.database.frame.box.value.bytes.ymal.DatabaseBytesConf
 import net.wdsj.servercore.eunm.inventory.InventoryAction;
 import net.wdsj.servercore.utils.ArrayUtils;
 import net.wdsj.servercore.utils.ReflectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 /**
@@ -157,7 +153,7 @@ public class GuiConfigManager {
 
             if (!originConfig.getOptions().containsKey("OVERRIDE_MODEL")) {
                 for (Map.Entry<String, ArrayList<String>> entry : modelConfig.getAction().entrySet()) {
-                    List<String> strings = originConfig.getAction().get(entry.getKey());
+                    List<String> strings = originConfig.getAction().getOrDefault(entry.getKey() , new ArrayList<>());
                     strings.addAll(0, entry.getValue());
                     originConfig.getAction().put(entry.getKey(), strings);
                 }
@@ -200,7 +196,7 @@ public class GuiConfigManager {
         } else if (WdsjServerAPI.getServerType().isBungee()) {
             return getGuiItemRender(getItemCreator("BUNGEE"), handler, config);
         }
-        return null;
+        throw new GuiItemCreatorNotFoundException("default");
     }
 
 
