@@ -28,6 +28,9 @@ bungeecord: all
 ### Sign:
 ![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/SIGN.gif)
 
+### Container:
+![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/demo3.jpg)
+
 ## 配置
 ### config.yml
 ```
@@ -67,10 +70,14 @@ hub-main-menu:
             - '§7点击查看当前游戏成就'
       action:
         left:
-          - 'cmd:player:cj'test:
+          - 'cmd:player:cj'
+test:
   title: 'DEMO MENU :)'
-  parent: model-pane3x9 //这里继承了3x9的model～～～～～～～～～
-  type: INHERIT
+  #设置父菜单
+  parent: 'model-pane5x9'
+  #继承
+  type: 'INHERIT'
+  #只需要设置要用的
   layout:
     - ''
     - '    BDCA'
@@ -80,12 +87,24 @@ hub-main-menu:
       menu.setTitle(menu.getTitle()+" 23333")
     }
   '
+  #快速容器
+  container:
+    test:
+      #第三排第一个到第八个，可跨行可设置多个,分割
+      range: '3:1-3:8'
+      items:
+        - display:
+            - material: GLASS
+              name: '§eNO.1'
+        - display:
+            - material: GLASS
+              name: '§eNO.2'
   items:
     C:
-      update: 2
+      update: 2  # 2 tick更新一次
       display:
         - head: 'Pink 1'
-          name: '§eHello! %player_name%'
+          name: '§eHello! %player_name%'  #设置名字，接下来的display自动继承，直到设置为其他内容或者null(不继承
         - head: 'Yellow 2'
         - head: 'Blue 3'
         - head: 'Green 4'
@@ -110,7 +129,7 @@ hub-main-menu:
           - 'cmd:console:say hello'
     B:
       update: 5
-      model: 'point' //使用point model ～～～～～～～～～～～
+      model: 'point'
       display:
         - material: GRASS_BLOCK
           name: '§eBUY A GRASS BLOCK $price$'
@@ -118,19 +137,19 @@ hub-main-menu:
             - '§clore1'
             - '§e现在的时间是: %localtime_time_yyyy-MM-dd-HH:mm:ss%'
         - material: DIRT
-          name: '§e点击购买草方块 $price$'
+          name: '§e点击购买草方块 $price$'  #引用参数price
           lore:
             - '§clore2'
             - '§e现在的时间是: %localtime_time_yyyy-MM-dd-HH:mm:ss%'
       action:
         left:
-          - 'cmd:console:give %player_name% GRASS 1'
+          - 'cmd:console:give %player_name% GRASS 1'  #如模板传回true则继续执行..
       args:
         price: '10'
         reason: '购买草方块'
     D:
       update: 5
-      model: 'item' // 使用 item model ，来实现以物品为价格购买～～～～～～～～～～～～～～
+      model: 'item' #使用item购买的模板
       display:
         - material: STONE
           name: '§e$reason'
@@ -147,15 +166,18 @@ hub-main-menu:
       action:
         left:
           - 'cmd:console:give %player_name% STONE 1'
+      #传参
       args:
-        priceDisplay: "§e需要 {price}" // 传餐，override model arg～～～～～～～～～
+        priceDisplay: "§e需要 {price}"
         items:
           - material: GRASS_BLOCK
-            amount: 1
-            lore: 'LORE需要叫艹的才行哟~'
+            amount: 128
+            lore:
+              - 'need lore'
         reason: '购买石头'
     TTTT:
       update: 5
+      #将在以下slot动态显示
       slot:
         - 10
         - 11
@@ -163,6 +185,7 @@ hub-main-menu:
       display:
         - material: GRASS_BLOCK
           name: '这是1'
+      #满足条件显示
       display-condition:
         - condition: '"%player_name%" === "Ya_Mo_TAT"'
           item:
