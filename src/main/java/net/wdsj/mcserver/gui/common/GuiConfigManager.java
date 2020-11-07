@@ -54,6 +54,8 @@ public class GuiConfigManager {
 
     private static final Map<String, GuiSignConfigWrapper> signMap = new HashMap<>();
 
+    private static final Set<String> keyConfig = new HashSet<>();
+
     public static void registerMenu(String name, GuiMenuConfigWrapper config) {
         menuMap.put(name, config);
     }
@@ -63,7 +65,15 @@ public class GuiConfigManager {
     }
 
     public static GuiMenuConfigWrapper getGuiMenu(String name) {
-        return menuMap.get(name);
+        GuiMenuConfigWrapper guiMenuConfigWrapper = menuMap.get(name);
+        if (guiMenuConfigWrapper == null){
+            if (!keyConfig.contains(name)) {
+                keyConfig.add(name);
+                loadMenuFromYaml(name  , WdsjServerAPI.getConfigManager().readKey("Gui#Menu" , name, new DatabaseBytesConfigValue()));
+                guiMenuConfigWrapper = menuMap.get(name);
+            }
+        }
+        return  guiMenuConfigWrapper;
     }
 
     public static GuiSignConfigWrapper getGuiSign(String name) {
@@ -71,6 +81,7 @@ public class GuiConfigManager {
     }
 
     public static void init() {
+        keyConfig.clear();
         itemModelMap.clear();
         menuMap.clear();
         YamlConfiguration menuYaml = WdsjServerAPI.getConfigManager().readServerGroup("Gui#Menu", new DatabaseBytesConfigValue());
@@ -108,31 +119,58 @@ public class GuiConfigManager {
     public static int loadModelFromYaml(ConfigurationSection section) {
         int n = 0;
         for (String key : section.getKeys(false)) {
-            GuiItemModelRenderConfig config = ConfigInvoke.invoke(GuiItemModelRenderConfig.class, section.getConfigurationSection(key));
-            addItemModelRenderConfig(key, config);
-            n++;
+            if (loadModelFromYaml(key , section.getConfigurationSection(key))) {
+                n++;
+            }
         }
         return n;
+    }
+
+    public static boolean loadModelFromYaml(String key , ConfigurationSection section) {
+        if (section!=null){
+            GuiItemModelRenderConfig config = ConfigInvoke.invoke(GuiItemModelRenderConfig.class, section);
+            addItemModelRenderConfig(key, config);
+            return true;
+        }
+        return false;
     }
 
     public static int loadMenuFromYaml(ConfigurationSection section) {
         int n = 0;
         for (String key : section.getKeys(false)) {
-            GuiMenuConfigWrapper guiMenuConfigWrapper = new GuiMenuConfigWrapper(section.getConfigurationSection(key));
-            registerMenu(key, guiMenuConfigWrapper);
-            n++;
+            if (loadMenuFromYaml(key, section.getConfigurationSection(key))) {
+                n++;
+            }
         }
         return n;
+    }
+
+    public static boolean loadMenuFromYaml(String key , ConfigurationSection section) {
+        if (section!=null){
+            GuiMenuConfigWrapper guiMenuConfigWrapper = new GuiMenuConfigWrapper(section);
+            registerMenu(key, guiMenuConfigWrapper);
+            return true;
+        }
+        return false;
     }
 
     public static int loadSignFromYaml(ConfigurationSection section) {
         int n = 0;
         for (String key : section.getKeys(false)) {
-            GuiSignConfigWrapper wrapper = new GuiSignConfigWrapper(section.getConfigurationSection(key));
-            registerSign(key, wrapper);
-            n++;
+            if (loadSignFromYaml(key , section.getConfigurationSection(key))) {
+                n++;
+            }
         }
         return n;
+    }
+
+    public static boolean loadSignFromYaml(String key , ConfigurationSection section) {
+        if (section!=null){
+            GuiSignConfigWrapper wrapper = new GuiSignConfigWrapper(section);
+            registerSign(key, wrapper);
+            return true;
+        }
+        return false;
     }
 
     public static void setMergeModelRenderConfig(String key, GuiItemRenderConfig originConfig) {

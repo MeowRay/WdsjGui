@@ -26,7 +26,7 @@ object Utils {
     )
 
 
-    fun getInventoryRange(minX: Int, minY: Int, maxX: Int, maxY: Int): List<Int> {
+    fun getInventoryRange(minY: Int,minX: Int, maxY: Int,  maxX: Int): List<Int> {
         var minX2 = minX
         var maxY2 = maxY
         var minY2: Int

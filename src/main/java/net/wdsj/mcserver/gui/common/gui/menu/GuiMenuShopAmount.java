@@ -64,7 +64,7 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
                 Iterator<Integer> iterator = freeSlot.iterator();
                 for (int amount : commodity.getAmounts()) {
                     if (iterator.hasNext()) {
-                        guiMenuStatic.setItem(iterator.next(), new GuiItemCommon<>(new ItemCommonBuilder(XMaterial.PAPER).setDisplay(String.format("§e购买%d%s%s", amount, commodity.getUnit(), commodity.getName())).setAmount(amount).addLore("", "§e左键确认购买"))
+                        guiMenuStatic.setItem(iterator.next(), new GuiItemCommon<Handler,Item>(new ItemCommonBuilder(XMaterial.PAPER).setDisplay(String.format("§e购买%d%s%s", amount, commodity.getUnit(), commodity.getName())).setAmount(amount).addLore("", "§e左键确认购买"))
                                 .addActionExecutor(InventoryAction.LEFT, (h) -> {
                                     buy(handler, commodity, amount);
                                     ThreadUtils.delayExecute(new TimerTask() {

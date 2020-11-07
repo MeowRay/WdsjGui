@@ -49,11 +49,11 @@ public abstract class GuiMenuPage<T, Handler, Item> {
 
     public abstract GuiItemBase<Handler, Item> getItemRender(int slot, T t);
 
-    public GuiItemBase<?, ?> getPreItem() {
+    public GuiItemBase<Handler, Item> getPreItem() {
         return GuiItemRepository.PAGE_PRE.clone();
     }
 
-    public GuiItemBase<?, ?> getNextItem() {
+    public GuiItemBase<Handler, Item> getNextItem() {
         return GuiItemRepository.PAGE_NEXT.clone();
     }
 

@@ -34,6 +34,13 @@ public class GuiManager {
     }
 
 
+    /**
+     * @param handler
+     * @param override 是否覆盖历史GUI，如是从其他GUI打开到这的则返回TRUE
+     * @param i
+     * @param <Handler>
+     * @return
+     */
     public static <Handler> boolean openHistory(Handler handler, boolean override, int i) {
         if (override && i < 1) i = 2;
         GuiData guiData = GuiManager.getGuiData(handler);

@@ -21,6 +21,7 @@ import net.wdsj.mcserver.gui.common.render.GuiMenuRenderDynamicItem;
 import net.wdsj.mcserver.gui.common.render.GuiMenuRenderItem;
 import net.wdsj.mcserver.gui.common.render.RenderItem;
 import net.wdsj.servercore.common.IteratorGroupCycle;
+import net.wdsj.servercore.common.placeholder.PlaceholderManager;
 import net.wdsj.servercore.eunm.inventory.InventoryType;
 import net.wdsj.servercore.utils.ScriptUtils;
 
@@ -94,7 +95,7 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
 
     @Override
     public <T extends GuiMenu<Handler, Item>> T create(GuiMenuRenderAdapter<Handler, Item> renderAdapter, Handler handler) {
-        GuiMenu<Handler, Item> guiMenu = new GuiMenu<Handler, Item>(handler, type, title) {
+        GuiMenu<Handler, Item> guiMenu = new GuiMenu<Handler, Item>(handler, type, PlaceholderManager.replace(handler,  title)) {
             @Override
             public GuiMenuRenderAdapter<Handler, Item> renderAdapter() {
                 return renderAdapter;
