@@ -188,4 +188,8 @@ public class GuiMenu<Handler, Item> implements Gui<Handler> {
     public InventoryType getInventoryType() {
         return inventoryType;
     }
+
+    public Handler getOwner() {
+        return owner;
+    }
 }
