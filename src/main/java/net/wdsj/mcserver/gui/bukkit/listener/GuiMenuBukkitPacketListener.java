@@ -18,7 +18,11 @@ import net.wdsj.servercore.common.LocalCooldown;
 import net.wdsj.servercore.eunm.inventory.InventoryAction;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Optional;
@@ -47,11 +51,11 @@ public class GuiMenuBukkitPacketListener extends PacketAdapter {
         Player player = event.getPlayer();
         if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
             WrapperPlayClientWindowClick windowClick = new WrapperPlayClientWindowClick(event.getPacket());
-            //   if (true) {
-            //       MenuBukkit.getInstance().getLogger().info(String.format(
-            //               "id:%d mode: %s button: %d action: %d slot: %d item:%s", windowClick.getWindowId(), windowClick.getShift().name(), windowClick.getButton(), windowClick.getActionNumber(), windowClick.getSlot(), windowClick.getClickedItem()));
-            //       //  return;
-            //   }
+        //    if (true) {
+        //        GuiBukkit.getInstance().getLogger().info(String.format(
+        //                "id:%d mode: %s button: %d action: %d slot: %d item:%s", windowClick.getWindowId(), windowClick.getShift().name(), windowClick.getButton(), windowClick.getActionNumber(), windowClick.getSlot(), windowClick.getClickedItem()));
+        //        //  return;
+        //    }
             final GuiData<Player> guiData = GuiManager.getGuiData(player);
             final Gui<Player> nowOpen = guiData.getNowOpen();
 
@@ -65,17 +69,14 @@ public class GuiMenuBukkitPacketListener extends PacketAdapter {
                 if (task != null) {
                     task.cancel();
                 }
+                boolean windowOut = guiMenu.getInventoryType().getSize() <= windowClick.getSlot();
                 Runnable runnable = () -> {
                     if (!clickCooldown.getPut(player).isCooldown()) {
-                        boolean windowOut = false;
-                        if (guiMenu.getInventoryType().getSize() <= windowClick.getSlot()) {
-                            windowOut = true;
-                        }
                         try {
                             if (!windowOut) {
                                 if (guiMenu.execute(player, inventoryAction, windowClick.getSlot())) {
                                     if (guiMenu.getGuiMenuProp().getClickSound() != null) {
-                                        GuiBukkit.getInstance().playSound(player , guiMenu.getGuiMenuProp().getClickSound() , false);
+                                        GuiBukkit.getInstance().playSound(player, guiMenu.getGuiMenuProp().getClickSound(), false);
                                     }
                                 }
                             }
@@ -94,7 +95,10 @@ public class GuiMenuBukkitPacketListener extends PacketAdapter {
                     }
                     switch (inventoryAction.getClickType()) {
                         case QUICK_MOVE:
-                            player.updateInventory();
+                            Bukkit.getScheduler().runTaskAsynchronously(GuiBukkit.getInstance(), () -> {
+                                player.updateInventory();
+                                guiMenu.renderAdapter().render(player, windowClick.getWindowId(), guiMenu);
+                            });
                             WdsjServerAPI.getNmsService().setWindowSlotItem(player, windowClick.getWindowId(), windowClick.getSlot(), windowClick.getClickedItem());
                             break;
                         case PICKUP:
@@ -118,9 +122,12 @@ public class GuiMenuBukkitPacketListener extends PacketAdapter {
                             break;
                         case SWAP:
                             //  nowOpen.renderAdapter().render(player, windowClick.getWindowId(), nowOpen);
-                            player.updateInventory();
-                            WdsjServerAPI.getNmsService().setWindowSlotItem(player, windowClick.getWindowId(), windowClick.getSlot(), windowClick.getClickedItem());
-                            WdsjServerAPI.getNmsService().setWindowSlotItem(player, -1, -1, null);
+               /*             WdsjServerAPI.getNmsService().setWindowSlotItem(player, windowClick.getWindowId(), windowClick.getSlot(), windowClick.getClickedItem());
+                            WdsjServerAPI.getNmsService().setWindowSlotItem(player, -1, -1, null);*/
+                            Bukkit.getScheduler().runTaskAsynchronously(GuiBukkit.getInstance(), () -> {
+                                guiMenu.renderAdapter().render(player, windowClick.getWindowId(), guiMenu);
+                                player.updateInventory();
+                            });
                             break;
                         default:
                             break;
@@ -130,7 +137,13 @@ public class GuiMenuBukkitPacketListener extends PacketAdapter {
 
                 BukkitTask bukkitTask = Bukkit.getScheduler().runTaskAsynchronously(GuiBukkit.getInstance(), runnable);
                 taskMap.put(player.getEntityId(), bukkitTask);
-                event.setCancelled(true);
+
+                if (windowOut) {
+                   /*
+                   InventoryClickEvent inventoryClickEvent = new InventoryClickEvent(player.getOpenInventory(), InventoryType.SlotType.RESULT, windowClick.getSlot(), ClickType.LEFT, org.bukkit.event.inventory.InventoryAction.PICKUP_ALL);
+                   Bukkit.getScheduler().runTask(GuiBukkit.getInstance() , () ->{Bukkit.getPluginManager().callEvent(inventoryClickEvent);});*/
+                } else
+                    event.setCancelled(true);
             }
         } else if (event.getPacketType() == PacketType.Play.Client.CLOSE_WINDOW) {
             final GuiData<Player> guiData = GuiManager.getGuiData(player);

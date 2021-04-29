@@ -22,7 +22,7 @@ import java.util.Map;
  * @date 2018/9/6 14:52
  */
 @Getter
-public class GuiSignConfigWrapper implements GuiRequirementOpen {
+public class GuiSignConfigWrapper implements GuiWrapper {
 
     private final GuiSignMainConfig config;
     private final GuiSignConfigModel guiSignConfigModel;
@@ -60,8 +60,13 @@ public class GuiSignConfigWrapper implements GuiRequirementOpen {
         return MenuUtils.scriptExecute(config.getRequirement(), handler, false);
     }
 
-    public <T> void open(T handler, Map<String, String> replaceMap) {
-        GuiManager.open(handler, guiSignConfigModel.create(handler, replaceMap));
+
+    @Override
+    public String getCommand() {
+        return config.getOpenCommand();
+    }
+    public <T> void open(T handler, Map<String, String> args) {
+        GuiManager.open(handler, guiSignConfigModel.create(handler, args));
     }
 
 }

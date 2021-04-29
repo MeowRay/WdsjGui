@@ -1,10 +1,7 @@
 package net.wdsj.mcserver.gui.common.config
 
-import lombok.Getter
-import java.util.HashMap
 import net.wdsj.servercore.config.invoke.annotation.ListInvoke
-import net.wdsj.mcserver.gui.common.config.GuiItemStackConfig
-import java.util.ArrayList
+import java.util.*
 
 /**
  * @author Arthur

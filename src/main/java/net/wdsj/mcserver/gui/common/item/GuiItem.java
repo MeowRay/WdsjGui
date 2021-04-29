@@ -1,5 +1,6 @@
 package net.wdsj.mcserver.gui.common.item;
 
+import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu;
 import net.wdsj.servercore.eunm.inventory.InventoryAction;
 
 /**
@@ -13,7 +14,7 @@ public interface GuiItem<Handler,Item>  extends Cloneable {
 
     Item getItemView(Handler handler);
 
-    void execute(Handler handler , InventoryAction inventoryAction);
+    void execute(GuiMenu<Handler,Item> menu ,Handler handler , InventoryAction inventoryAction);
 
 
 }

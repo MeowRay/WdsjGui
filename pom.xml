@@ -67,6 +67,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>net.wdsj.mcserver</groupId>
+            <artifactId>WdsjLib</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>net.wdsj.bukkit</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>4.1.0</version>
@@ -75,19 +81,13 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.14</version>
+            <version>1.18.18</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.wdsj.mcserver</groupId>
             <artifactId>WdsjServerCore</artifactId>
             <version>2.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.wdsj.mcserver</groupId>
-            <artifactId>WdsjLib</artifactId>
-            <version>1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -111,6 +111,12 @@
             <groupId>net.wdsj.spigot.origin</groupId>
             <artifactId>spigot-1.8.8</artifactId>
             <version>1.8.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.wdsj.spigot.origin</groupId>
+            <artifactId>spigot-1.12.2</artifactId>
+            <version>1.12.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

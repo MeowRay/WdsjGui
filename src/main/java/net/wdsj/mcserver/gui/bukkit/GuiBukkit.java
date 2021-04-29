@@ -13,6 +13,7 @@ import net.wdsj.mcserver.gui.bukkit.command.GuiPlayerCommand;
 import net.wdsj.mcserver.gui.bukkit.creator.GuiItemBukkitConfigCreator;
 import net.wdsj.mcserver.gui.bukkit.executor.*;
 import net.wdsj.mcserver.gui.bukkit.listener.GuiMenuBukkitPacketListener;
+import net.wdsj.mcserver.gui.bukkit.listener.GuiMenuListener;
 import net.wdsj.mcserver.gui.bukkit.listener.GuiSignBukkitPacketListener;
 import net.wdsj.mcserver.gui.common.*;
 import net.wdsj.mcserver.gui.common.creator.GuiItemExecutorCreator;
@@ -54,6 +55,8 @@ public final class GuiBukkit extends JavaPlugin {
         defaultAsync = WdsjServerAPI.getNmsService().getProtocolVersion().getId() <= ProtocolVersion.v1_12_2.getId();
         WdsjServerAPI.getPluginManager().registerCommand(CommandProxyBuilder.newBuilder(this, new GuiAdminCommand()).setLabel("guiadmin"));
         WdsjServerAPI.getPluginManager().registerCommand(CommandProxyBuilder.newBuilder(this, new GuiPlayerCommand()).setLabel("gui"));
+        Bukkit.getPluginManager().registerEvents(new GuiMenuListener(), this);
+
         guiMenuBukkitPacketListener = new GuiMenuBukkitPacketListener(this);
         guiSignBukkitPacketListener = new GuiSignBukkitPacketListener(this);
 
@@ -78,7 +81,8 @@ public final class GuiBukkit extends JavaPlugin {
         GuiConfigManager.registerMenuExecutorCreator("open", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemCommonOpenExecutor<>(args, GuiFactory.GUIMENU_RENDER_BUKKIT_PACKET_ADAPTER));
         GuiConfigManager.registerMenuExecutorCreator("close", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemBukkitCloseExecutor());
         GuiConfigManager.registerMenuExecutorCreator("js", (GuiItemExecutorCreator<Player>) (args, argsMap) -> new GuiItemBukkitJavaScriptExecutor(args , argsMap));
-        GuiConfigManager.registerMenuExecutorCreator("cmd", (GuiItemExecutorCreator<Player>) (args,map) -> new GuiItemBukkitCommandExecutor(args));
+        GuiConfigManager.registerMenuExecutorCreator("cmd", (GuiItemExecutorCreator<Player>) (args,map) -> new GuiItemBukkitCommandExecutor(false,args));
+        GuiConfigManager.registerMenuExecutorCreator("cmd-async", (GuiItemExecutorCreator<Player>) (args,map) -> new GuiItemBukkitCommandExecutor(true,args));
         GuiConfigManager.registerMenuExecutorCreator("title", (GuiItemExecutorCreator<Player>)  (args, map)  -> new GuiItemBukkitTitleExecutor(args));
         GuiConfigManager.registerMenuExecutorCreator("sound", (GuiItemExecutorCreator<Player>) (args, map) -> {
             String[] split = args.split("-", 3);
@@ -95,8 +99,6 @@ public final class GuiBukkit extends JavaPlugin {
         MenuUtils.putScriptObject("title" , WdsjLib.getInstance().getTitleAPI());
         MenuUtils.putScriptObject("bossbar" , WdsjLib.getInstance().getBossBarAPI());
 
-        MenuUtils.putScriptObject("guimanager", GuiManager.class);
-        MenuUtils.putScriptObject("utils", Utils.INSTANCE);
         MenuUtils.putScriptObject("itemconfig" , ItemStackConfig.class);
 
         GuiConfigManager.init();

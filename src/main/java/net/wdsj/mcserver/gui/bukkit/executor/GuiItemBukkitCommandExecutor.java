@@ -12,12 +12,17 @@ import org.bukkit.entity.Player;
  */
 public class GuiItemBukkitCommandExecutor extends GuiItemBukkitExecutor {
 
-    private static final boolean async = WdsjServerAPI.getNmsService().getProtocolVersion().getId() <= ProtocolVersion.v1_12_2.getId();
+    //private static final boolean async = WdsjServerAPI.getNmsService().getProtocolVersion().getId() <= ProtocolVersion.v1_12_2.getId();
 
     private final String[] commands;
 
-    public GuiItemBukkitCommandExecutor(String... commands) {
+    public GuiItemBukkitCommandExecutor(boolean async,String... commands) {
         super(async);
+        this.commands = commands;
+    }
+
+    public GuiItemBukkitCommandExecutor(String... commands) {
+        super(true);
         this.commands = commands;
     }
 

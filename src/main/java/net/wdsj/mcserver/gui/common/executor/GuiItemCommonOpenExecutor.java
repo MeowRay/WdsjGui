@@ -21,7 +21,7 @@ public class GuiItemCommonOpenExecutor<Handler> implements GuiItemExecutor<Handl
 
     @Override
     public boolean actionExecute(Handler handler) {
-        GuiMenuConfigWrapper guiMenu = GuiConfigManager.getGuiMenu(menu);
+        GuiMenuConfigWrapper guiMenu = GuiConfigManager.getGuiMenu(menu, true);
         if (guiMenu != null) {
             guiMenu.open(adapter, handler);
         }

@@ -11,7 +11,6 @@ import net.wdsj.mcserver.gui.common.GuiManager;
 import net.wdsj.mcserver.gui.common.gui.GuiMenuProp;
 import net.wdsj.mcserver.gui.common.model.GuiItemModel;
 import net.wdsj.mcserver.gui.common.model.GuiMenuModel;
-import net.wdsj.servercore.compatible.XSound;
 import net.wdsj.servercore.eunm.inventory.InventoryType;
 import net.wdsj.servercore.eunm.inventory.InventoryAction;
 import net.wdsj.mcserver.gui.common.adapter.GuiMenuRenderAdapter;
@@ -82,7 +81,7 @@ public class GuiMenu<Handler, Item> implements Gui<Handler> {
     public boolean execute(Handler handler, InventoryAction inventoryAction, int slot) {
         GuiItem<Handler, Item> handlerItemGuiItem = guiItemMap.get(slot);
         if (handlerItemGuiItem != null) {
-            handlerItemGuiItem.execute(handler, inventoryAction);
+            handlerItemGuiItem.execute(this, handler, inventoryAction);
             return true;
         }
         return false;
@@ -139,6 +138,7 @@ public class GuiMenu<Handler, Item> implements Gui<Handler> {
         List<Integer> list = new ArrayList<>();
         maxY = Math.max(maxY, minY);
         minX--;
+        maxX--;
 
         for (int i = minY; i <= maxY; i++) {
             int minx = i == 1 ? minX : minX + 9 * (i - 1);
@@ -183,5 +183,9 @@ public class GuiMenu<Handler, Item> implements Gui<Handler> {
     @Override
     public void close(Handler handler, int id) {
         renderAdapter().close(handler, id);
+    }
+
+    public InventoryType getInventoryType() {
+        return inventoryType;
     }
 }

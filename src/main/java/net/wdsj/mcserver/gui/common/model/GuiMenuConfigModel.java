@@ -56,7 +56,7 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
         }
 
         if (menuConfig.isInherit() && menuConfig.getParent() != null) {
-            GuiMenuConfigWrapper parentModelWrapper = GuiConfigManager.getGuiMenu(menuConfig.getParent());
+            GuiMenuConfigWrapper parentModelWrapper = GuiConfigManager.getGuiMenu(menuConfig.getParent(), true);
             Preconditions.checkNotNull(parentModelWrapper, String.format("菜单模板%s未注册!", menuConfig.getParent()));
             parentModel = parentModelWrapper.getGuiMenuConfigModel();
             if (type == null) {
@@ -81,8 +81,20 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
         for (Map.Entry<String, GuiMenuMainConfig.Container> entry : menuConfig.getContainer().entrySet()) {
             containerMap.put(GuiMenuItemContainer.parse(entry.getValue().getRange()), entry.getValue().getItems());
         }
+
+        for (Map.Entry<GuiMenuItemContainer<Handler, Item>, List<GuiItemRenderConfig>> entry : containerMap.entrySet()) {
+            List<GuiItemRenderConfig> list = entry.getValue();
+            for (GuiItemRenderConfig value : list) {
+                if (value.getModel() != null) {
+                    GuiConfigManager.setMergeModelRenderConfig(value.getModel(), value);
+                }
+                value.init();
+                value.setAction(Maps.transformValues(value.getAction(), strings -> Lists.transform(strings, new MapArgTrans(value.getStringArgs()))));
+            }
+        }
         for (Map.Entry<String, GuiItemRenderConfig> entry : menuConfig.getItems().entrySet()) {
             GuiItemRenderConfig value = entry.getValue();
+
             if (value.getModel() != null) {
                 GuiConfigManager.setMergeModelRenderConfig(value.getModel(), value);
             }

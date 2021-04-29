@@ -5,6 +5,8 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import javafx.util.Pair;
 import mc233.cn.wdsjlib.global.api.eco.EcoAPI;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.wdsj.mcserver.gui.common.GuiConfigManager;
+import net.wdsj.mcserver.gui.common.GuiManager;
 import net.wdsj.servercore.common.placeholder.PlaceholderManager;
 import net.wdsj.servercore.utils.ScriptUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +29,11 @@ public class MenuUtils {
 
     private static final Map<String, Object> scriptObjMap = new HashMap<>();
 
+    static {
+        MenuUtils.putScriptObject("guimanager", GuiManager.class);
+        MenuUtils.putScriptObject("utils", Utils.INSTANCE);
+        MenuUtils.putScriptObject("configmanager" , GuiConfigManager.class);
+    }
 
     public static void putScriptObject(String key, Object obj) {
         scriptObjMap.put(key, obj);
@@ -37,7 +44,7 @@ public class MenuUtils {
 
     public static String[] getFoo(String string) {
         List<String> list = new ArrayList<>();
-        int start = 0;
+        int start = -1;
 
         char[] chars = string.toCharArray();
         for (int i = 0; i < chars.length; i++) {
@@ -46,10 +53,10 @@ public class MenuUtils {
                 start = i;
                 continue;
             }
-            if (start != 0) {
+            if (start != -1) {
                 if (c == ']') {
                     list.add(string.substring(start + 1, i));
-                    start = 0;
+                    start = -1;
                 }
                 continue;
             }

@@ -26,7 +26,7 @@ public class GuiPlayerCommand implements WdsjCommand<CommandSender> {
 
     @SubCommand
     public void openMenu(Player player, String menu) {
-        GuiMenuConfigWrapper guiMenu = GuiConfigManager.getGuiMenu(menu);
+        GuiMenuConfigWrapper guiMenu = GuiConfigManager.getGuiMenu(menu, false);
         if (guiMenu != null) {
             if (guiMenu.requirementCanOpen(player)) {
                 guiMenu.open(GuiFactory.GUIMENU_RENDER_BUKKIT_PACKET_ADAPTER, player);
@@ -37,7 +37,7 @@ public class GuiPlayerCommand implements WdsjCommand<CommandSender> {
 
     @SubCommand
     public void openSign(Player player, String sign, @Arg(required = false) String args) {
-        GuiSignConfigWrapper guiSign = GuiConfigManager.getGuiSign(sign);
+        GuiSignConfigWrapper guiSign = GuiConfigManager.getGuiSign(sign , false);
         if (guiSign !=null){
             if (guiSign.requirementCanOpen(player)) {
                 if (args == null) args = "";

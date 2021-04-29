@@ -17,7 +17,8 @@ import java.util.Map;
 public class GuiMenuMainConfig {
 
     private String title = "menu";
-    private String parent;
+    private String parent = null ;
+    private String openCommand = null;
     private String construct = "";
     private String type = "CHEST";
     private List<String> layout = new ArrayList<>();

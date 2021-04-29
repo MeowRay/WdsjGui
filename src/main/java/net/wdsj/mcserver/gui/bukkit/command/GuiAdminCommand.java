@@ -66,7 +66,7 @@ public class GuiAdminCommand implements WdsjCommand<CommandSender> {
 
     @SubCommand(async = true)
     public void openMenu(CommandSender sender, @Arg(name = "menu") String menu, @Arg(required = false, name = "player") String player) {
-        GuiMenuConfigWrapper guiMenu = GuiConfigManager.getGuiMenu(menu);
+        GuiMenuConfigWrapper guiMenu = GuiConfigManager.getGuiMenu(menu, true);
         if (guiMenu != null) {
             Player playerExact = player == null && sender instanceof Player ? (Player) sender : Bukkit.getPlayerExact(player);
             if (BukkitUtils.isOnlinePlayer(playerExact)) {
@@ -81,7 +81,7 @@ public class GuiAdminCommand implements WdsjCommand<CommandSender> {
 
     @SubCommand(async = true)
     public void openSign(CommandSender sender, @Arg(name = "sign") String sign, String player, @Arg(required = false) String args) {
-        GuiSignConfigWrapper guiSign = GuiConfigManager.getGuiSign(sign);
+        GuiSignConfigWrapper guiSign = GuiConfigManager.getGuiSign(sign , true);
         if (guiSign != null) {
             Player playerExact = player == null && sender instanceof Player ? (Player) sender : Bukkit.getPlayerExact(player);
             if (BukkitUtils.isOnlinePlayer(playerExact)) {
@@ -99,7 +99,7 @@ public class GuiAdminCommand implements WdsjCommand<CommandSender> {
         }
     }
 
-    @SubCommand
+    @SubCommand(async = true)
     public void reload(CommandSender sender) {
         GuiBukkit.getInstance().closeAll();
         GuiConfigManager.init();

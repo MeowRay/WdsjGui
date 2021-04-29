@@ -22,13 +22,10 @@ import java.util.List;
  */
 public abstract class GuiMenuPage<T, Handler, Item> {
 
-    @Getter
     private final GuiMenuStatic<Handler, Item> guiMenu;
 
-    @Setter
     private int preSlot;
 
-    @Setter
     private int nextSlot;
 
     @Getter
@@ -41,6 +38,18 @@ public abstract class GuiMenuPage<T, Handler, Item> {
         this.preSlot = preSlot;
         this.nextSlot = nextSlot;
         this.originTitle = guiMenu.getTitle();
+    }
+
+    public GuiMenuStatic<Handler, Item> getGuiMenu() {
+        return guiMenu;
+    }
+
+    public void setPreSlot(int preSlot) {
+        this.preSlot = preSlot;
+    }
+
+    public void setNextSlot(int nextSlot) {
+        this.nextSlot = nextSlot;
     }
 
     public abstract T getContent(int index);

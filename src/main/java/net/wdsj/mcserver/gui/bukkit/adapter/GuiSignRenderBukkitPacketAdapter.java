@@ -5,6 +5,7 @@ import com.comphenix.packetwrapper.common.WrapperCommonPlayServerSignUpdate;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import mc233.cn.wdsjlib.bukkit.utils.BukkitUtils;
+import net.minecraft.server.v1_12_R1.PacketPlayOutOpenSignEditor;
 import net.minecraft.server.v1_8_R3.PacketPlayInUpdateSign;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockChange;
 import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateSign;
@@ -18,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * @author Arthur
@@ -27,7 +29,7 @@ import org.bukkit.entity.Player;
 public class GuiSignRenderBukkitPacketAdapter implements GuiSignRenderAdapter<Player> {
 
     private static final Material material = XMaterial.OAK_WALL_SIGN.parseMaterial();
-    private static final int dis = Bukkit.getServer().getViewDistance() * 12;
+    private static final int dis = Bukkit.getServer().getViewDistance() * 12;//12;
 
     @Override
     public int open(Player player, GuiSign<Player> guiSign) {
@@ -36,8 +38,13 @@ public class GuiSignRenderBukkitPacketAdapter implements GuiSignRenderAdapter<Pl
         if (fY > 254) {
             fY = location.getBlockY() - dis;
         }
+        location.setY(fY);
 
-        BlockPosition blockPosition = new BlockPosition(location.getBlockX(), fY, location.getBlockZ());
+        location = player.getLocation();
+
+
+        BlockPosition blockPosition = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+
 
 
         if (BukkitUtils.getPlayerVersion(player) == ProtocolVersion.v1_16_1.getId()){
@@ -62,7 +69,12 @@ public class GuiSignRenderBukkitPacketAdapter implements GuiSignRenderAdapter<Pl
 
         WrapperPlayServerOpenSignEditor openSignEditor = new WrapperPlayServerOpenSignEditor();
         openSignEditor.setLocation(blockPosition);
-        openSignEditor.sendPacket(player);
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                openSignEditor.sendPacket(player);
+            }
+        }.runTaskLaterAsynchronously(GuiBukkit.getInstance() , 1);
 
         return blockPosition.hashCode();
     }

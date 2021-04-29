@@ -1,13 +1,16 @@
 package net.wdsj.mcserver.gui.common.item;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import net.wdsj.servercore.eunm.inventory.InventoryAction;
+import net.wdsj.mcserver.gui.common.executor.GuiMenuItemExecutor;
+import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu;
 import net.wdsj.servercore.common.placeholder.PlaceholderManager;
+import net.wdsj.servercore.eunm.inventory.InventoryAction;
 import net.wdsj.servercore.interfaces.Executor;
 import net.wdsj.servercore.interfaces.Replacement;
 
@@ -24,7 +27,7 @@ public abstract class GuiItemBase<Handler, Item> implements GuiItem<Handler, Ite
     @Getter
     private Set<Replacement<Handler>> replacements = new THashSet<>();
 
-    private Multimap<InventoryAction, Executor<Handler>> executorMultimap = HashMultimap.create();
+    private Multimap<InventoryAction, Executor<Handler>> executorMultimap = LinkedHashMultimap.create();
 
 
     public GuiItemBase<Handler, Item> addReplacement(Replacement<Handler> replacement) {
@@ -65,12 +68,18 @@ public abstract class GuiItemBase<Handler, Item> implements GuiItem<Handler, Ite
         return PlaceholderManager.replace(handler, str);
     }
 
-    public void execute(Handler handler, InventoryAction inventoryAction) {
+    public void execute(GuiMenu<Handler, Item> menu, Handler handler, InventoryAction inventoryAction) {
         for (Executor<Handler> handlerExecutor : executorMultimap.get(inventoryAction)) {
+            if (handlerExecutor instanceof GuiMenuItemExecutor){
+                ((GuiMenuItemExecutor<Handler, Item>) handlerExecutor).execute(menu , handler);
+            }
             handlerExecutor.execute(handler);
         }
         if (inventoryAction != null) {
             for (Executor<Handler> handlerExecutor : executorMultimap.get(InventoryAction.ALL)) {
+                if (handlerExecutor instanceof GuiMenuItemExecutor){
+                    ((GuiMenuItemExecutor<Handler, Item>) handlerExecutor).execute(menu , handler);
+                }
                 handlerExecutor.execute(handler);
             }
         }

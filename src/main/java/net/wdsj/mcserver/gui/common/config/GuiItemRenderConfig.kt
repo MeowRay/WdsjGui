@@ -16,6 +16,7 @@ data class GuiItemRenderConfig(
     var repo: String? = null,
     var args: MutableMap<String, Any> = HashMap(),
     var slot: List<Int> = ArrayList(),
+    var static: Boolean = false,
 
     @ListInvoke
     var display: List<GuiItemStackConfig> = ArrayList(),
@@ -42,7 +43,7 @@ data class GuiItemRenderConfig(
 
         if (initScript.isNotEmpty()) {
             initScript.forEach {
-                MenuUtils.scriptExecute(it,   mapOf("render" to this ).plus(args), null, false)
+                MenuUtils.scriptExecute(it, mapOf("render" to this).plus(args), null, false)
             }
         }
     }

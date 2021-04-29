@@ -5,6 +5,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import javafx.util.Pair;
+import mc233.cn.wdsjlib.global.api.eco.data.EcoAmountData;
 import net.wdsj.common.simpleconfig.ConfigurationSection;
 import net.wdsj.common.simpleconfig.file.YamlConfiguration;
 import net.wdsj.mcserver.gui.common.config.GuiItemModelRenderConfig;
@@ -23,13 +25,17 @@ import net.wdsj.mcserver.gui.common.repo.GuiItemRepository;
 import net.wdsj.mcserver.gui.common.utils.MenuUtils;
 import net.wdsj.mcserver.gui.common.wrapper.GuiMenuConfigWrapper;
 import net.wdsj.mcserver.gui.common.wrapper.GuiSignConfigWrapper;
+import net.wdsj.mcserver.gui.common.wrapper.GuiWrapper;
 import net.wdsj.servercore.WdsjServerAPI;
+import net.wdsj.servercore.common.CaseInsensitiveMap;
 import net.wdsj.servercore.config.invoke.ConfigInvoke;
 import net.wdsj.servercore.database.frame.box.value.bytes.ymal.DatabaseBytesConfigValue;
 import net.wdsj.servercore.eunm.inventory.InventoryAction;
 import net.wdsj.servercore.utils.ArrayUtils;
 import net.wdsj.servercore.utils.ReflectionUtils;
+import org.apache.commons.lang.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -40,7 +46,7 @@ import java.util.logging.Logger;
  */
 public class GuiConfigManager {
 
-    private static final Logger LOGGER = Logger.getLogger("GuiMenuConfigManager");
+    private static final Logger LOGGER = WdsjServerAPI.getLogger("GuiManager");
 
     private static final Map<String, GuiItemModelRenderConfig> itemModelMap = new THashMap<>();
 
@@ -50,7 +56,9 @@ public class GuiConfigManager {
 
     private static final Map<String, GuiItemConfigCreator<?, ?>> itemCreatorMap = new THashMap<>();
 
-    private static final Map<String, GuiMenuConfigWrapper> menuMap = new HashMap<>();
+    private static final Map<String, GuiWrapper> commandMap = new HashMap<>();
+
+    private static final Map<String, GuiMenuConfigWrapper> menuMap = new THashMap<>();
 
     private static final Map<String, GuiSignConfigWrapper> signMap = new HashMap<>();
 
@@ -64,26 +72,35 @@ public class GuiConfigManager {
         signMap.put(name, config);
     }
 
-    public static GuiMenuConfigWrapper getGuiMenu(String name) {
-        GuiMenuConfigWrapper guiMenuConfigWrapper = menuMap.get(name);
-        if (guiMenuConfigWrapper == null){
+    public static GuiMenuConfigWrapper getGuiMenu(String name, boolean readByDb) {
+        GuiMenuConfigWrapper wrapper = menuMap.get(name);
+        if (readByDb && wrapper == null) {
             if (!keyConfig.contains(name)) {
                 keyConfig.add(name);
-                loadMenuFromYaml(name  , WdsjServerAPI.getConfigManager().readKey("Gui#Menu" , name, new DatabaseBytesConfigValue()));
-                guiMenuConfigWrapper = menuMap.get(name);
+                loadMenuFromYaml(name, WdsjServerAPI.getConfigManager().readKey("Gui#Menu", name, new DatabaseBytesConfigValue()));
+                wrapper = menuMap.get(name);
             }
         }
-        return  guiMenuConfigWrapper;
+        return wrapper;
     }
 
-    public static GuiSignConfigWrapper getGuiSign(String name) {
-        return signMap.get(name);
+    public static GuiSignConfigWrapper getGuiSign(String name, boolean readByDb) {
+        GuiSignConfigWrapper guiSignConfigWrapper = signMap.get(name);
+        if (readByDb && guiSignConfigWrapper == null) {
+            if (!keyConfig.contains(name)) {
+                keyConfig.add(name);
+                loadMenuFromYaml(name, WdsjServerAPI.getConfigManager().readKey("Gui#Menu", name, new DatabaseBytesConfigValue()));
+                guiSignConfigWrapper = signMap.get(name);
+            }
+        }
+        return guiSignConfigWrapper;
     }
 
     public static void init() {
         keyConfig.clear();
         itemModelMap.clear();
         menuMap.clear();
+        commandMap.clear();
         YamlConfiguration menuYaml = WdsjServerAPI.getConfigManager().readServerGroup("Gui#Menu", new DatabaseBytesConfigValue());
         YamlConfiguration menuGlobalYaml = WdsjServerAPI.getConfigManager().readMain("Gui#Menu", new DatabaseBytesConfigValue());
         YamlConfiguration modelYaml = WdsjServerAPI.getConfigManager().readServerGroup("Gui#Model", new DatabaseBytesConfigValue());
@@ -119,15 +136,15 @@ public class GuiConfigManager {
     public static int loadModelFromYaml(ConfigurationSection section) {
         int n = 0;
         for (String key : section.getKeys(false)) {
-            if (loadModelFromYaml(key , section.getConfigurationSection(key))) {
+            if (loadModelFromYaml(key, section.getConfigurationSection(key))) {
                 n++;
             }
         }
         return n;
     }
 
-    public static boolean loadModelFromYaml(String key , ConfigurationSection section) {
-        if (section!=null){
+    public static boolean loadModelFromYaml(String key, ConfigurationSection section) {
+        if (section != null) {
             GuiItemModelRenderConfig config = ConfigInvoke.invoke(GuiItemModelRenderConfig.class, section);
             addItemModelRenderConfig(key, config);
             return true;
@@ -138,17 +155,25 @@ public class GuiConfigManager {
     public static int loadMenuFromYaml(ConfigurationSection section) {
         int n = 0;
         for (String key : section.getKeys(false)) {
-            if (loadMenuFromYaml(key, section.getConfigurationSection(key))) {
-                n++;
+            try {
+                if (loadMenuFromYaml(key, section.getConfigurationSection(key))) {
+                    n++;
+                }
+            }catch (Exception e){
+                LOGGER.warning(String.format("加载菜单 %s 失败 %s! ",key, e.getMessage()));
+                e.printStackTrace();
             }
         }
         return n;
     }
 
-    public static boolean loadMenuFromYaml(String key , ConfigurationSection section) {
-        if (section!=null){
-            GuiMenuConfigWrapper guiMenuConfigWrapper = new GuiMenuConfigWrapper(section);
-            registerMenu(key, guiMenuConfigWrapper);
+    public static boolean loadMenuFromYaml(String key, ConfigurationSection section) {
+        if (section != null) {
+            GuiMenuConfigWrapper wrapper = new GuiMenuConfigWrapper(section);
+            registerMenu(key, wrapper);
+            if (wrapper.getCommand() != null) {
+                commandMap.put(wrapper.getCommand().toLowerCase(), wrapper);
+            }
             return true;
         }
         return false;
@@ -157,17 +182,20 @@ public class GuiConfigManager {
     public static int loadSignFromYaml(ConfigurationSection section) {
         int n = 0;
         for (String key : section.getKeys(false)) {
-            if (loadSignFromYaml(key , section.getConfigurationSection(key))) {
+            if (loadSignFromYaml(key, section.getConfigurationSection(key))) {
                 n++;
             }
         }
         return n;
     }
 
-    public static boolean loadSignFromYaml(String key , ConfigurationSection section) {
-        if (section!=null){
+    public static boolean loadSignFromYaml(String key, ConfigurationSection section) {
+        if (section != null) {
             GuiSignConfigWrapper wrapper = new GuiSignConfigWrapper(section);
             registerSign(key, wrapper);
+            if (wrapper.getCommand() != null) {
+                commandMap.put(wrapper.getCommand().toLowerCase(), wrapper);
+            }
             return true;
         }
         return false;
@@ -191,7 +219,7 @@ public class GuiConfigManager {
 
             if (!originConfig.getOptions().containsKey("OVERRIDE_MODEL")) {
                 for (Map.Entry<String, ArrayList<String>> entry : modelConfig.getAction().entrySet()) {
-                    List<String> strings = originConfig.getAction().getOrDefault(entry.getKey() , new ArrayList<>());
+                    List<String> strings = originConfig.getAction().getOrDefault(entry.getKey(), new ArrayList<>());
                     strings.addAll(0, entry.getValue());
                     originConfig.getAction().put(entry.getKey(), strings);
                 }
@@ -208,6 +236,7 @@ public class GuiConfigManager {
             }
         }
     }
+
     public static void addItemModelRenderConfig(String key, GuiItemModelRenderConfig config) {
         itemModelMap.put(key, config);
     }
@@ -237,15 +266,28 @@ public class GuiConfigManager {
         throw new GuiItemCreatorNotFoundException("default");
     }
 
+    public static GuiWrapper getCommandGuiWrapper(String command) {
+        return commandMap.get(command);
+    }
+
 
     //TODO
     private static final Set<GuiItemRenderConfig> renderOverrideConfigSet = new THashSet<>();
+    private static final Map<Pair<GuiItemConfigCreator<?, ?>, GuiItemRenderConfig>, List<GuiItem<?, ?>>> staticGuiItemRender = new HashMap<>();
 
     public static <Handler> List<GuiItem<?, ?>> getGuiItemRender(GuiItemConfigCreator<Handler, ?> guiItemConfigCreator, Handler handler, GuiItemRenderConfig config) {
         List<GuiItem<?, ?>> items = new ArrayList<>();
        /* if (config.getModel() != null) {
             setMergeModelRenderConfig(itemModelMap.get(config.getModel()), config);
         } else*/
+        Pair<GuiItemConfigCreator<?, ?>, GuiItemRenderConfig> pair = null;
+        if (config.getStatic()) {
+            pair = new Pair<>(guiItemConfigCreator, config);
+            if (staticGuiItemRender.containsKey(pair)) {
+                return staticGuiItemRender.get(pair);
+            }
+        }
+
         if (config.getRepo() != null) {
             GuiItem guiItem = GuiItemRepository.get(config.getRepo());
             if (guiItem != null) {
@@ -293,6 +335,9 @@ public class GuiConfigManager {
         for (GuiItem<?, ?> item : items) {
             setGuiItemAction(item, config.getAction(), config.getArgs());
         }
+        if (pair != null) {
+            staticGuiItemRender.put(pair, items);
+        }
         return items;
     }
 
@@ -304,18 +349,22 @@ public class GuiConfigManager {
                 Optional<InventoryAction> inventoryActionOptional = Enums.getIfPresent(InventoryAction.class, key.toUpperCase());
                 if (inventoryActionOptional.isPresent()) {
                     List<String> value = entry.getValue();
-                    GuiItemExecutorCollection<H> executorCollection = new GuiItemExecutorCollection<>();
-                    for (String s : value) {
-                        Optional<GuiItemExecutor<Object>> guiItemExecutor = getGuiItemExecutorCreator(s, argsMap);
-                        if (guiItemExecutor.isPresent()) {
-                            executorCollection.addExecutor((GuiItemExecutor<H>) guiItemExecutor.get());
-                        }
-                    }
-                    guiItemBase.addActionExecutor(inventoryActionOptional.get(), executorCollection);
+                    guiItemBase.addActionExecutor(inventoryActionOptional.get(), createExecuteCollection(value, argsMap));
                 }
             }
         }
         return guiItem;
+    }
+
+    public static <Handler> GuiItemExecutorCollection<Handler> createExecuteCollection(List<String> list, Map<String, Object> argsMap) {
+        GuiItemExecutorCollection<Handler> executorCollection = new GuiItemExecutorCollection<>();
+        for (String s : list) {
+            Optional<GuiItemExecutor<Object>> guiItemExecutor = getGuiItemExecutorCreator(s, argsMap);
+            if (guiItemExecutor.isPresent()) {
+                executorCollection.addExecutor((GuiItemExecutor<Handler>) guiItemExecutor.get());
+            }
+        }
+        return executorCollection;
     }
 
     public static <Handler> Optional<GuiItemExecutor<Handler>> getGuiItemExecutorCreator(String text, Map<String, Object> argsMap) {

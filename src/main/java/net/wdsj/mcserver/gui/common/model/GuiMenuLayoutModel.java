@@ -2,9 +2,9 @@ package net.wdsj.mcserver.gui.common.model;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu;
 import net.wdsj.mcserver.gui.common.adapter.GuiMenuRenderAdapter;
 import net.wdsj.mcserver.gui.common.builder.GuiItemRenderBuilder;
+import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu;
 import net.wdsj.mcserver.gui.common.render.GuiMenuRenderItem;
 import net.wdsj.mcserver.gui.common.utils.MenuUtils;
 import net.wdsj.servercore.eunm.inventory.InventoryType;

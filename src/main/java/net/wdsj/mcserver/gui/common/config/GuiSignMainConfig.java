@@ -17,6 +17,8 @@ public class GuiSignMainConfig {
 
     private List<String> lines = new ArrayList<>();
 
+    private String openCommand = null;
+
     private int line = 1;
 
     private boolean ignoreEmpty = false;

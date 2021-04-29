@@ -33,11 +33,7 @@ public class GuiSignBukkitCommandExecutor implements GuiSignExecutor<Player> {
                 .replace("$line2", lines[1])
                 .replace("$line3", lines[2])
                 .replace("$line4", lines[3]);
-        if (Bukkit.isPrimaryThread() || GuiBukkit.isDefaultAsync()) {
-            BukkitUtils.executeCommand(player, PlaceholderManager.replace(player, replace));
-        } else {
-            Bukkit.getScheduler().runTask(GuiBukkit.getInstance(), () ->  BukkitUtils.executeCommand(player, PlaceholderManager.replace(player, replace)));
-        }
+        BukkitUtils.runOptimalASyncOrSync(()-> BukkitUtils.executeCommand(player, PlaceholderManager.replace(player, replace)));
         return con;
     }
 
