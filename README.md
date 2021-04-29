@@ -1,5 +1,5 @@
 # WdsjGui
-支持bungeecord&amp;spigot基于封包的gui插件
+支持bungeecord&amp;spigot基于封包的gui插件，可自实现渲染器来支持更多服务端，这可能是Minecraft中最屌的菜单插件哈哈哈
 
 
 spigot: 1.7-1.16
