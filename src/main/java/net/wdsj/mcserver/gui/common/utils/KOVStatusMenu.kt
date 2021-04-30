@@ -73,6 +73,7 @@ class Page<T : Any, O : Any>(
         val itemRender = menu.manager.getItemRender<O, ItemStack>(menu.owner, menu.kovC, entity)
         return itemRender.apply {
             addActionExecutor(InventoryAction.LEFT) {
+                menu.setItem(slot, getItemRender(slot, entity))
                 GuiManager.refreshGuiMenuRender(menu.owner, menu)
             }
         }

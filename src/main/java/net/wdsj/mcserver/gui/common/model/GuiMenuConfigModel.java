@@ -1,5 +1,6 @@
 package net.wdsj.mcserver.gui.common.model;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -24,9 +25,11 @@ import net.wdsj.servercore.common.IteratorGroupCycle;
 import net.wdsj.servercore.common.placeholder.PlaceholderManager;
 import net.wdsj.servercore.eunm.inventory.InventoryType;
 import net.wdsj.servercore.utils.ScriptUtils;
+import org.jetbrains.annotations.Nullable;
 
 import javax.script.ScriptException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Arthur
@@ -42,7 +45,7 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
     private final String title;
 
     private final GuiMenuConfigModel<Handler, Item> parentModel;
-    private final Map<GuiMenuItemContainer<Handler, Item> , List<GuiItemRenderConfig>> containerMap = new HashMap<>();
+    private final Map<GuiMenuItemContainer<Handler, Item>, List<GuiItemRenderConfig>> containerMap = new HashMap<>();
 
     public GuiMenuConfigModel(GuiMenuMainConfig menuConfig) {
         this.menuConfig = menuConfig;
@@ -79,7 +82,13 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
         }
 
         for (Map.Entry<String, GuiMenuMainConfig.Container> entry : menuConfig.getContainer().entrySet()) {
-            containerMap.put(GuiMenuItemContainer.parse(entry.getValue().getRange()), entry.getValue().getItems());
+            if (!entry.getValue().getLayoutItems().isEmpty()) {
+                List<GuiItemRenderConfig> collect = entry.getValue().getLayoutItems().stream().map(s -> menuConfig.getItems().get(s)).collect(Collectors.toList());
+                containerMap.put(GuiMenuItemContainer.parse(entry.getValue().getRange()), collect);
+            }else{
+                containerMap.put(GuiMenuItemContainer.parse(entry.getValue().getRange()), entry.getValue().getItems());
+            }
+
         }
 
         for (Map.Entry<GuiMenuItemContainer<Handler, Item>, List<GuiItemRenderConfig>> entry : containerMap.entrySet()) {
@@ -107,7 +116,7 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
 
     @Override
     public <T extends GuiMenu<Handler, Item>> T create(GuiMenuRenderAdapter<Handler, Item> renderAdapter, Handler handler) {
-        GuiMenu<Handler, Item> guiMenu = new GuiMenu<Handler, Item>(handler, type, PlaceholderManager.replace(handler,  title)) {
+        GuiMenu<Handler, Item> guiMenu = new GuiMenu<Handler, Item>(handler, type, PlaceholderManager.replace(handler, title)) {
             @Override
             public GuiMenuRenderAdapter<Handler, Item> renderAdapter() {
                 return renderAdapter;
@@ -173,9 +182,9 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
             for (GuiItemRenderConfig config : value) {
                 List<GuiItem<?, ?>> guiItem = GuiConfigManager.getGuiItemRender(handler, config);
                 if (guiItem.size() == 1) {
-                    container.addItem( new GuiItemRenderBuilder<>((GuiItem<Handler, Item>) guiItem.get(0)));
+                    container.addItem(new GuiItemRenderBuilder<>((GuiItem<Handler, Item>) guiItem.get(0)));
                 } else {
-                    container.addItem( new GuiItemRenderBuilder<>(config.getUpdate(), Lists.transform(guiItem, guiItem12 -> (GuiItem<Handler, Item>) guiItem12)));
+                    container.addItem(new GuiItemRenderBuilder<>(config.getUpdate(), Lists.transform(guiItem, guiItem12 -> (GuiItem<Handler, Item>) guiItem12)));
                 }
             }
             list.addAll(container.getRenderItems());

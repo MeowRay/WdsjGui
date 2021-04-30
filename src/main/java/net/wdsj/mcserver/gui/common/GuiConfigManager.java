@@ -159,8 +159,8 @@ public class GuiConfigManager {
                 if (loadMenuFromYaml(key, section.getConfigurationSection(key))) {
                     n++;
                 }
-            }catch (Exception e){
-                LOGGER.warning(String.format("加载菜单 %s 失败 %s! ",key, e.getMessage()));
+            } catch (Exception e) {
+                LOGGER.warning(String.format("加载菜单 %s 失败 %s! ", key, e.getMessage()));
                 e.printStackTrace();
             }
         }
@@ -296,13 +296,18 @@ public class GuiConfigManager {
         }
 
 
+        Map<String, List<String>> action = config.getAction();
+
         if (handler != null) {
-            for (GuiItemShowConfig guiItemShowConfig : config.getDisplayCondition()) {
-                String condition = MenuUtils.replace(guiItemShowConfig.getCondition(), config.getStringArgs());
+            for (GuiItemShowConfig sConfig : config.getDisplayCondition()) {
+                if (sConfig.getAction() != null) {
+                    action = sConfig.getAction();
+                }
+                String condition = MenuUtils.replace(sConfig.getCondition(), config.getStringArgs());
                 if (Strings.isNullOrEmpty(condition) || MenuUtils.scriptExecute(condition, handler, false)) {
                     GuiItemStackConfig preConfig = null;
-                    for (int i = 0; i < guiItemShowConfig.getItem().size(); i++) {
-                        GuiItemStackConfig guiItemStackConfig = guiItemShowConfig.getItem().get(i);
+                    for (int i = 0; i < sConfig.getItem().size(); i++) {
+                        GuiItemStackConfig guiItemStackConfig = sConfig.getItem().get(i);
                         if (preConfig != null) {
                             ReflectionUtils.copyFieldsOnlyNull(preConfig, guiItemStackConfig);
                         }
@@ -333,7 +338,7 @@ public class GuiConfigManager {
 
         }
         for (GuiItem<?, ?> item : items) {
-            setGuiItemAction(item, config.getAction(), config.getArgs());
+            setGuiItemAction(item, action , config.getArgs());
         }
         if (pair != null) {
             staticGuiItemRender.put(pair, items);

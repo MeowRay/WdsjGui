@@ -48,6 +48,8 @@ public class GuiMenuMainConfig {
         @ListInvoke
         private List<GuiItemRenderConfig> items = new ArrayList<>();
 
+        private List<String> layoutItems = new ArrayList<>();
+
     }
 
 }

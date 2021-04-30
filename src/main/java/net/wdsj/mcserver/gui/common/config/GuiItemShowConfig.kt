@@ -1,10 +1,8 @@
-package net.wdsj.mcserver.gui.common.config;
+package net.wdsj.mcserver.gui.common.config
 
-import lombok.Getter;
-import net.wdsj.servercore.config.invoke.annotation.ListInvoke;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter
+import net.wdsj.servercore.config.invoke.annotation.ListInvoke
+import java.util.*
 
 /**
  * @author Arthur
@@ -12,11 +10,11 @@ import java.util.List;
  * @date 2018/8/29 15:02
  */
 @Getter
-public class GuiItemShowConfig {
+class GuiItemShowConfig {
+    var condition = "false"
 
-    public String condition = "true";
+    var action: MutableMap<String, List<String>>? =  null
 
     @ListInvoke
-    public List<GuiItemStackConfig> item = new ArrayList<>();
-
+    var item: List<GuiItemStackConfig> = ArrayList()
 }
