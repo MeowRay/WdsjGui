@@ -33,7 +33,6 @@ public class GuiItemBukkitCommandExecutor extends GuiItemBukkitExecutor {
 
     @Override
     public boolean exec(Player player) {
-        GuiBukkit.getInstance().getLogger(). info(" async:" +isAsync() +" p:" + Bukkit.isPrimaryThread() +" cmd:" + commands);
         BukkitUtils.executeCommand(player, commands);
         return true;
     }

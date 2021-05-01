@@ -53,7 +53,9 @@ public abstract class GuiItemBukkitExecutor implements GuiItemCanAsyncExecutor<P
         try {
             return Bukkit.getScheduler().callSyncMethod(GuiBukkit.getInstance(), () -> exec(player)).get();
         } catch (InterruptedException | ExecutionException e) {
-            throw new GuiItemExecuteException(e);
+            e.printStackTrace();
+            //  throw new GuiItemExecuteException(e);
+            return false;
         }
     }
 

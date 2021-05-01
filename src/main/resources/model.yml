@@ -1,0 +1,156 @@
+point:
+  display:
+    - material: STONE
+  requirement-args:
+    - price
+    - reason
+    - success
+    - failure
+    - priceDisplay
+    - type
+  args:
+    type: 'POINT'
+    reason: ''
+    server: ''
+    priceDisplay: '§6{price}'
+    doneClose: true
+    failure:
+      - ''
+  initScript:
+    - '
+         var successExec = configmanager.static.createExecuteCollection(success,render.getArgs());
+         var failureExec = configmanager.static.createExecuteCollection(failure,render.getArgs());
+
+         for each (var el in render.getDisplay()){
+           el.getLore().add(priceDisplay.replace("{price}","§e"+price +" §6"+(type==="POINT"?"点券":"金币") ));
+         }
+
+         options.put("BUY_ITEM_MODEL_SUCCESS_EXEC", successExec);
+         options.put("BUY_ITEM_MODEL_FAILURE_EXEC", failureExec);
+    '
+  action:
+    left:
+      - 'js:
+        main();
+        function main(){
+
+            var successExec = options.get("BUY_ITEM_MODEL_SUCCESS_EXEC");
+            var failureExec = options.get("BUY_ITEM_MODEL_FAILURE_EXEC");
+
+            var servers = "$server".split(",");
+            var result = false;
+            if (eco.take(handler.getName(),$price,type,reason)){
+                title.sendTitle(handler, "§a§l购买成功");
+                successExec.execute(handler);
+                result = true;
+            } else {
+                if (type === "POINT"){
+                    handler.spigot().sendMessage(Java.type("net.wdsj.servercore.message.ServerMessages$Component").TAKE_POINT_FAIL);
+                }else{
+                    handler.sendMessage("§c金币不足!");
+                }
+                failureExec.execute(handler);
+          }
+            if (doneClose){
+                guimanager.static.close(handler);
+            }
+
+            return result;
+        }
+      '
+item-buy:
+  display:
+    - material: STONE
+  requirement-args:
+    - reason
+    - items
+    - number
+    - priceDisplay
+    - success
+    - failure
+  args:
+    reason: ''
+    server: ''
+    number: 1
+    doneClose: 'true'
+    priceDisplay: '§6{price}'
+    failure:
+      - ''
+  initScript:
+    - '
+   init();
+   function init(){
+       var itemHandler = eco.getEcoHandler("ITEM");
+       if(itemHandler!=null){
+         var data = eco.createEcoData(itemHandler, utils.createSectionByList(items,"items"));
+       }
+
+       if(data !=null ){
+
+          var successExec = configmanager.static.createExecuteCollection(success,render.getArgs());
+          var failureExec = configmanager.static.createExecuteCollection(failure,render.getArgs());
+          for each (var el in render.getDisplay()){
+            el.getLore().add(priceDisplay.replace("{price}",data.getPriceDisplay() ));
+          }
+
+          options.put("BUY_ITEM_MODEL_DATA", data);
+          options.put("BUY_ITEM_MODEL_SUCCESS_EXEC", successExec);
+          options.put("BUY_ITEM_MODEL_FAILURE_EXEC", failureExec);
+      }
+   }
+
+    '
+  action:
+    left:
+      - 'js:
+        main();
+        function main(){
+            var data = options.get("BUY_ITEM_MODEL_DATA");
+            var successExec = options.get("BUY_ITEM_MODEL_SUCCESS_EXEC");
+            var failureExec = options.get("BUY_ITEM_MODEL_FAILURE_EXEC");
+
+           var itemHandler = eco.getEcoHandler("ITEM");
+           if(data == null){
+             handler.sendMessage("系统错误！请联系腐竹~");
+             return false;
+           }
+            var result = false;
+            if (eco.take(handler.getName(),itemHandler,data,1,null,reason)){
+                title.sendTitle(handler, "§a§l购买成功");
+                successExec.execute(handler);
+                result = true;
+            } else {
+                title.sendTitles(handler, "§c§l物资不足" , "§6你需要: "+data.getPriceDisplay());
+                failureExec.execute(handler);
+            }
+            if (doneClose){
+                guimanager.static.close(handler);
+            }
+
+            return result;
+        }
+      '
+back-to-hub:
+  display:
+    - material: 'SLIME_BALL'
+      name: '§e回到大厅'
+      lore:
+        - '§7返回当前游戏大厅'
+  action:
+    left:
+      - 'close'
+      - 'cmd:console:bungeeplayercommand %player_name% hub'
+trash:
+  display:
+    - material: 'CAULDRON'
+      name: '§c回收站'
+      lore:
+        - '§7快把东西塞进来把(*/ω＼*)~'
+        - ''
+        - '§f左键: §7打开垃圾桶'
+        - '§f左键: §7清空背包(需要二次确认)'
+  action:
+    left:
+      - 'cmd:player:trash'
+    right:
+      - 'cmd:console:trash clear %player_name%'
