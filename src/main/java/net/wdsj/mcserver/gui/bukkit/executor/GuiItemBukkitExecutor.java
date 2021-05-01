@@ -2,7 +2,9 @@ package net.wdsj.mcserver.gui.bukkit.executor;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import net.wdsj.mcserver.gui.bukkit.GuiBukkit;
+import net.wdsj.mcserver.gui.common.execption.GuiItemExecuteException;
 import net.wdsj.mcserver.gui.common.executor.GuiItemCanAsyncExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -19,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 public abstract class GuiItemBukkitExecutor implements GuiItemCanAsyncExecutor<Player> {
 
 
-    private boolean async = true;
+    private boolean async;
 
     public GuiItemBukkitExecutor(boolean async) {
         this.async = async;
@@ -32,27 +34,27 @@ public abstract class GuiItemBukkitExecutor implements GuiItemCanAsyncExecutor<P
     }
 
     @Override
-    public abstract boolean allowAsyncExecute(Player player);
+    public abstract boolean exec(Player player);
 
     @Override
     public boolean async(Player player) {
         if (Bukkit.isPrimaryThread()) {
             Bukkit.getScheduler().runTaskAsynchronously(GuiBukkit.getInstance(), () -> {
-                allowAsyncExecute(player);
+                exec(player);
             });
             return true;
         }
-        return allowAsyncExecute(player);
+        return exec(player);
     }
 
+    @SneakyThrows
     @Override
     public boolean sync(Player player) {
         try {
-            return Bukkit.getScheduler().callSyncMethod(GuiBukkit.getInstance(), () -> allowAsyncExecute(player)).get();
+            return Bukkit.getScheduler().callSyncMethod(GuiBukkit.getInstance(), () -> exec(player)).get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            throw new GuiItemExecuteException(e);
         }
-        return allowAsyncExecute(player);
     }
 
 

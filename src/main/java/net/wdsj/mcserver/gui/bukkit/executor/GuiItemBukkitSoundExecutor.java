@@ -21,7 +21,7 @@ public class GuiItemBukkitSoundExecutor extends GuiItemBukkitExecutor {
     }
 
     @Override
-    public boolean allowAsyncExecute(Player player) {
+    public boolean exec(Player player) {
         xSound.play(player , volume, pitch);
         return true;
     }

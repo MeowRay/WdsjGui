@@ -78,8 +78,11 @@ public final class GuiBukkit extends JavaPlugin {
         GuiConfigManager.registerItemCreator("BUKKIT", new GuiItemBukkitConfigCreator());
 
         //ITEM CREATOR
+        GuiConfigManager.registerMenuExecutorCreator("menu", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemCommonOpenExecutor<>(args, GuiFactory.GUIMENU_RENDER_BUKKIT_PACKET_ADAPTER));
         GuiConfigManager.registerMenuExecutorCreator("open", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemCommonOpenExecutor<>(args, GuiFactory.GUIMENU_RENDER_BUKKIT_PACKET_ADAPTER));
         GuiConfigManager.registerMenuExecutorCreator("close", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemBukkitCloseExecutor());
+        GuiConfigManager.registerMenuExecutorCreator("msg", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemMessageExecutor(args));
+        GuiConfigManager.registerMenuExecutorCreator("lang-msg", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemLanguageMessageExecutor(args));
         GuiConfigManager.registerMenuExecutorCreator("js", (GuiItemExecutorCreator<Player>) (args, argsMap) -> new GuiItemBukkitJavaScriptExecutor(args , argsMap));
         GuiConfigManager.registerMenuExecutorCreator("cmd", (GuiItemExecutorCreator<Player>) (args,map) -> new GuiItemBukkitCommandExecutor(false,args));
         GuiConfigManager.registerMenuExecutorCreator("cmd-async", (GuiItemExecutorCreator<Player>) (args,map) -> new GuiItemBukkitCommandExecutor(true,args));

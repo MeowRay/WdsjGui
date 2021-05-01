@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 public class GuiItemBukkitCloseExecutor extends GuiItemBukkitExecutor {
 
     @Override
-    public boolean allowAsyncExecute(Player player) {
+    public boolean exec(Player player) {
         closeInventory(player);
         return true;
     }

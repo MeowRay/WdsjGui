@@ -21,7 +21,7 @@ public interface GuiItemCanAsyncExecutor<Handler> extends GuiItemExecutor<Handle
         }
     }
 
-    boolean allowAsyncExecute(Handler handler);
+    boolean exec(Handler handler);
 
     boolean async(Handler handler);
 

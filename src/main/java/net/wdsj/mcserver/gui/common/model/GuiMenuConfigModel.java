@@ -83,9 +83,13 @@ public class GuiMenuConfigModel<Handler, Item> implements GuiMenuModel<Handler, 
 
         for (Map.Entry<String, GuiMenuMainConfig.Container> entry : menuConfig.getContainer().entrySet()) {
             if (!entry.getValue().getLayoutItems().isEmpty()) {
-                List<GuiItemRenderConfig> collect = entry.getValue().getLayoutItems().stream().map(s -> menuConfig.getItems().get(s)).collect(Collectors.toList());
+                List<GuiItemRenderConfig> collect = entry.getValue().getLayoutItems().stream().map(s -> {
+                    GuiItemRenderConfig config = menuConfig.getItems().get(s);
+                    Preconditions.checkNotNull(config , String.format("layoutItem %s most not null",  s));
+                    return config;
+                }).collect(Collectors.toList());
                 containerMap.put(GuiMenuItemContainer.parse(entry.getValue().getRange()), collect);
-            }else{
+            } else {
                 containerMap.put(GuiMenuItemContainer.parse(entry.getValue().getRange()), entry.getValue().getItems());
             }
 

@@ -1,8 +1,10 @@
 package net.wdsj.mcserver.gui.bukkit.executor;
 
 import mc233.cn.wdsjlib.bukkit.utils.BukkitUtils;
+import net.wdsj.mcserver.gui.bukkit.GuiBukkit;
 import net.wdsj.servercore.WdsjServerAPI;
 import net.wdsj.servercore.protocol.ProtocolVersion;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -16,20 +18,23 @@ public class GuiItemBukkitCommandExecutor extends GuiItemBukkitExecutor {
 
     private final String[] commands;
 
-    public GuiItemBukkitCommandExecutor(boolean async,String... commands) {
+    public GuiItemBukkitCommandExecutor(boolean async, String... commands) {
         super(async);
         this.commands = commands;
     }
+/*
 
     public GuiItemBukkitCommandExecutor(String... commands) {
         super(true);
         this.commands = commands;
     }
+*/
 
 
     @Override
-    public boolean allowAsyncExecute(Player player) {
-            BukkitUtils.executeCommand(player, commands);
+    public boolean exec(Player player) {
+        GuiBukkit.getInstance().getLogger(). info(" async:" +isAsync() +" p:" + Bukkit.isPrimaryThread() +" cmd:" + commands);
+        BukkitUtils.executeCommand(player, commands);
         return true;
     }
 

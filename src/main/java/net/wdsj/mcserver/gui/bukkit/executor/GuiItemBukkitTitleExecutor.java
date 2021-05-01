@@ -25,7 +25,7 @@ public class GuiItemBukkitTitleExecutor extends GuiItemBukkitExecutor {
     }
 
     @Override
-    public boolean allowAsyncExecute(Player player) {
+    public boolean exec(Player player) {
         WdsjLib.getInstance().getTitleAPI().sendTitle(player, titleWrapper);
         return true;
     }

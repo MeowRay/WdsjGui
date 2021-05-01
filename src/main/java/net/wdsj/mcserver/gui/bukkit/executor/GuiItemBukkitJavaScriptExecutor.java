@@ -21,7 +21,7 @@ public class GuiItemBukkitJavaScriptExecutor extends GuiItemBukkitExecutor {
     }
 
     @Override
-    public boolean allowAsyncExecute(Player player) {
+    public boolean exec(Player player) {
         return MenuUtils.scriptExecute(script, objectMap, player, false);
     }
 }
