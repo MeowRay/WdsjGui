@@ -13,6 +13,7 @@ import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu
 import net.wdsj.mcserver.gui.common.gui.menu.GuiMenuStatic
 import net.wdsj.mcserver.gui.common.item.GuiItemBase
 import net.wdsj.mcserver.gui.common.item.GuiItemCommon
+import net.wdsj.mcserver.gui.common.utils.TemplateUtils.Companion.setUnderEvenlyByPageButton
 import net.wdsj.mcserver.langutils.lang.convert.EnumLang
 import net.wdsj.servercore.compatible.XMaterial
 import net.wdsj.servercore.eunm.inventory.InventoryAction

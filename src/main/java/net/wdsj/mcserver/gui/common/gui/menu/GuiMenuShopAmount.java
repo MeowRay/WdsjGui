@@ -41,20 +41,16 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
     public GuiItemBase<Handler, Item> buildCommodity(ItemCommonBuilder builder, T commodity) {
         return new GuiItemCommon<Handler, Item>(builder).addActionExecutor(InventoryAction.LEFT, handler -> {
             if (commodity.getAmounts().length == 0) {
-                GuiSign<Handler> guiSign = new GuiSign<>(handler, new String[]{"", "请在上方输入购买", commodity.getName(), "的数量"}, (handler1, lines) -> {
-                    String amountStr = lines[0];
+                GuiSign<Handler> guiSign = new GuiSign<>(handler, new String[]{"在下方输入购买", commodity.getName() + "的数量", "" + getDefaultAmount(), commodity.getUnit()}, (handler1, lines) -> {
+                    String amountStr = lines[2];
+                    boolean success = false;
                     if (!amountStr.isEmpty()) {
                         if (NumberUtils.isNumber(amountStr)) {
                             int amount = NumberUtils.toInt(amountStr);
-                            buy(handler, commodity, amount);
+                            success = buy(handler, commodity, amount);
                         }
                     }
-                    ThreadUtils.delayExecute(new TimerTask() {
-                        @Override
-                        public void run() {
-                            GuiManager.open(handler, GuiMenuShopAmount.this);
-                        }
-                    }, 2, TimeUnit.SECONDS);
+                    doExecuted(handler, success);
                     return false;
                 });
                 GuiManager.open(handler, guiSign);
@@ -64,24 +60,29 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
                 Iterator<Integer> iterator = freeSlot.iterator();
                 for (int amount : commodity.getAmounts()) {
                     if (iterator.hasNext()) {
-                        guiMenuStatic.setItem(iterator.next(), new GuiItemCommon<Handler,Item>(new ItemCommonBuilder(XMaterial.PAPER).setDisplay(String.format("§e购买%d%s%s", amount, commodity.getUnit(), commodity.getName())).setAmount(amount).addLore("", "§e左键确认购买"))
-                                .addActionExecutor(InventoryAction.LEFT, (h) -> {
-                                    buy(handler, commodity, amount);
-                                    ThreadUtils.delayExecute(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            GuiManager.open(handler, GuiMenuShopAmount.this);
-                                        }
-                                    }, 2, TimeUnit.SECONDS);
-                                }));
+                        guiMenuStatic.setItem(iterator.next(), new GuiItemCommon<Handler, Item>(new ItemCommonBuilder(XMaterial.PAPER).setDisplay(String.format("§e购买%d%s%s", amount, commodity.getUnit(), commodity.getName())).setAmount(amount).addLore("", "§e左键确认购买"))
+                                .addActionExecutor(InventoryAction.LEFT, (h) -> doExecuted(handler, buy(handler, commodity, amount))));
                     } else {
                         break;
                     }
                 }
                 GuiManager.open(handler, guiMenuStatic);
             }
-
         });
+    }
+
+    public void doExecuted(Handler handler, boolean success) {
+        ThreadUtils.delayExecute(new TimerTask() {
+            @Override
+            public void run() {
+                GuiManager.open(handler, GuiMenuShopAmount.this);
+            }
+        }, 2, TimeUnit.SECONDS);
+    }
+
+
+    public int getDefaultAmount() {
+        return 1;
     }
 
     public boolean buy(Handler handler, T commodity, int amount) {

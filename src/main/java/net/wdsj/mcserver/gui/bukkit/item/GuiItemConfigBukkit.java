@@ -2,8 +2,10 @@ package net.wdsj.mcserver.gui.bukkit.item;
 
 import mc233.cn.wdsjlib.bukkit.utils.ItemBuilder;
 import mc233.cn.wdsjlib.bukkit.utils.ItemUtils;
+import mc233.cn.wdsjlib.global.common.itemstack.ItemCommonBuilder;
 import mc233.cn.wdsjlib.global.config.ItemStackConfig;
 import net.wdsj.servercore.compatible.XMaterial;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * @author Arthur
@@ -13,10 +15,8 @@ import net.wdsj.servercore.compatible.XMaterial;
 public class GuiItemConfigBukkit extends GuiItemBukkit {
 
     public GuiItemConfigBukkit(ItemStackConfig itemStackConfig) {
-        super(new ItemBuilder(ItemUtils.readConfigItem(itemStackConfig, XMaterial.STONE)));
+        super(new ItemBuilder((ItemStack) ItemCommonBuilder.createFromConfig(itemStackConfig, XMaterial.STONE).build()));
     }
-
-
 
 
 }

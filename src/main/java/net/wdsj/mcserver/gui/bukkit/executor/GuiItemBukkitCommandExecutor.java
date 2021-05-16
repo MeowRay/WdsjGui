@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
  */
 public class GuiItemBukkitCommandExecutor extends GuiItemBukkitExecutor {
 
-    //private static final boolean async = WdsjServerAPI.getNmsService().getProtocolVersion().getId() <= ProtocolVersion.v1_12_2.getId();
+  private static final boolean async = WdsjServerAPI.getNmsService().getProtocolVersion().getId() <= ProtocolVersion.v1_12_2.getId();
 
     private final String[] commands;
 
@@ -22,13 +22,13 @@ public class GuiItemBukkitCommandExecutor extends GuiItemBukkitExecutor {
         super(async);
         this.commands = commands;
     }
-/*
+
 
     public GuiItemBukkitCommandExecutor(String... commands) {
-        super(true);
+        super(async);
         this.commands = commands;
     }
-*/
+
 
 
     @Override

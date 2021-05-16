@@ -8,6 +8,7 @@ import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu;
 import net.wdsj.mcserver.gui.common.GuiManager;
 import net.wdsj.mcserver.gui.common.item.GuiItem;
 import net.wdsj.servercore.eunm.inventory.InventoryType;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,7 +40,7 @@ public class GuiMenuRenderBukkitPacketAdapter implements GuiMenuRenderAdapter<Pl
     public int open(Player player, GuiMenu<Player, ItemStack> guiMenu) {
         //  final Map<Integer, ItemStack> view = getView(guiMenu, player);
         if (guiMenu.getGuiMenuProp().getOpenSound() != null) {
-            GuiBukkit.getInstance().playSound(player , guiMenu.getGuiMenuProp().getOpenSound() , false);
+            GuiBukkit.getInstance().playSound(player, guiMenu.getGuiMenuProp().getOpenSound(), false);
         }
         return WdsjServerAPI.getNmsService().openWindow(player, guiMenu.getTitle(), guiMenu.getInventoryType(), guiMenu.getInventoryType().getSize(), getView(guiMenu, player));
     }
@@ -69,6 +70,7 @@ public class GuiMenuRenderBukkitPacketAdapter implements GuiMenuRenderAdapter<Pl
     private Map<Integer, ItemStack> getView(GuiMenu<Player, ItemStack> guiItemMap, Player handler) {
         Map<Integer, ItemStack> map = new HashMap<>();
         for (Map.Entry<Integer, GuiItem<Player, ItemStack>> entry : guiItemMap.getGuiItemMap().entrySet()) {
+            if (entry.getValue().getItem().getType() == Material.AIR) continue;
             map.put(entry.getKey(), entry.getValue().getItemView(handler));
         }
 /*        for (int i = 0; i < guiItemMap.getInventoryType().getSize(); i++) {

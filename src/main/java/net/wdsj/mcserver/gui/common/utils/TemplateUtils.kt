@@ -8,7 +8,12 @@ import net.wdsj.mcserver.gui.common.component.page.GuiMenuPage
  * @version 1.0
  */
 
-fun GuiMenuPage<*, *, *>.setUnderEvenlyByPageButton() {
-    setPreSlot(guiMenu.inventoryType.size - 6)
-    setNextSlot(guiMenu.inventoryType.size - 4)
+class TemplateUtils {
+    companion object {
+        @JvmStatic
+        fun GuiMenuPage<*, *, *>.setUnderEvenlyByPageButton() {
+            setPreSlot(guiMenu.inventoryType.size - 6)
+            setNextSlot(guiMenu.inventoryType.size - 4)
+        }
+    }
 }

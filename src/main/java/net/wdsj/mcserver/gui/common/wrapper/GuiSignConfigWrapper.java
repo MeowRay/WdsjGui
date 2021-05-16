@@ -39,7 +39,7 @@ public class GuiSignConfigWrapper implements GuiWrapper {
                     GuiSignExecutor guiSignExecutor1 = signExecutorCreator.create(replace);
                     if (config.isIgnoreEmpty()) {
                         guiSignExecutor = (o1, lines) -> {
-                            System.out.println(ArrayUtils.toString(lines));
+                         //   System.out.println(ArrayUtils.toString(lines));
                             if (lines[config.getLine() - 1].isEmpty()) {
                                 return false;
                             }

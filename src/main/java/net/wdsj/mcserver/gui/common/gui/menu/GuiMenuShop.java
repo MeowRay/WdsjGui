@@ -10,6 +10,7 @@ import mc233.cn.wdsjlib.global.api.eco.EcoHandler;
 import mc233.cn.wdsjlib.global.api.eco.EcoPointsHandler;
 import mc233.cn.wdsjlib.global.api.eco.data.EcoData;
 import mc233.cn.wdsjlib.global.common.itemstack.ItemCommonBuilder;
+import net.wdsj.mcserver.gui.bukkit.GuiBukkit;
 import net.wdsj.mcserver.gui.common.component.page.GuiMenuLoadedPage;
 import net.wdsj.mcserver.gui.common.item.GuiItemBase;
 import net.wdsj.mcserver.gui.common.item.GuiItemCommon;

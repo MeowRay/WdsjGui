@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
 import mc233.cn.wdsjlib.global.common.itemstack.ItemCommonBuilder;
 
+import java.util.stream.Collectors;
+
 /**
  * @author Arthur
  * @version 1.0
@@ -28,7 +30,7 @@ public class GuiItemCommon<Handler, Item> extends GuiItemBase<Handler, Item> {
     public Item getItemView(Handler handler) {
         ItemCommonBuilder clone = builder.clone();
         clone.setDisplay(replace(handler, clone.getDisplay()));
-        clone.setLores(Lists.transform(clone.getLores(), s -> replace(handler, s)));
+        clone.setLores(clone.getLores().stream().map(s -> replace(handler, s)).collect(Collectors.toList()));
         return clone.build();
     }
 

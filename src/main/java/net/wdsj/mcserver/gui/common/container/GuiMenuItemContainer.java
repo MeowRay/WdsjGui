@@ -71,6 +71,12 @@ public class GuiMenuItemContainer<Handler, Item> implements Cloneable {
                 if (c1.length > 1 && c2.length > 1) {
                     list.addAll(Utils.INSTANCE.getInventoryRange(Integer.parseInt(c1[0]), Integer.parseInt(c1[1]), Integer.parseInt(c2[0]), Integer.parseInt(c2[1])));
                 }
+            } else if (split.length == 1) {
+                String[] c1 = split[0].split(":", 2);
+                int y = Integer.parseInt(c1[0]);
+                int x = Integer.parseInt(c1[1]);
+                list.add((y == 1 ? x : (y - 1) * 9 + x) - 1);
+
             }
         }
         return new GuiMenuItemContainer<>(list);

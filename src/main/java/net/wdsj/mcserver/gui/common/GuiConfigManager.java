@@ -6,7 +6,6 @@ import com.google.common.base.Strings;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import javafx.util.Pair;
-import mc233.cn.wdsjlib.global.api.eco.data.EcoAmountData;
 import net.wdsj.common.simpleconfig.ConfigurationSection;
 import net.wdsj.common.simpleconfig.file.YamlConfiguration;
 import net.wdsj.mcserver.gui.common.config.GuiItemModelRenderConfig;
@@ -27,15 +26,12 @@ import net.wdsj.mcserver.gui.common.wrapper.GuiMenuConfigWrapper;
 import net.wdsj.mcserver.gui.common.wrapper.GuiSignConfigWrapper;
 import net.wdsj.mcserver.gui.common.wrapper.GuiWrapper;
 import net.wdsj.servercore.WdsjServerAPI;
-import net.wdsj.servercore.common.CaseInsensitiveMap;
 import net.wdsj.servercore.config.invoke.ConfigInvoke;
 import net.wdsj.servercore.database.frame.box.value.bytes.ymal.DatabaseBytesConfigValue;
 import net.wdsj.servercore.eunm.inventory.InventoryAction;
 import net.wdsj.servercore.utils.ArrayUtils;
 import net.wdsj.servercore.utils.ReflectionUtils;
-import org.apache.commons.lang.StringUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -62,7 +58,8 @@ public class GuiConfigManager {
 
     private static final Map<String, GuiSignConfigWrapper> signMap = new HashMap<>();
 
-    private static final Set<String> keyConfig = new HashSet<>();
+    private static final Set<String> menuKeyConfig = new HashSet<>();
+    private static final Set<String> signKeyConfig = new HashSet<>();
 
     public static void registerMenu(String name, GuiMenuConfigWrapper config) {
         menuMap.put(name, config);
@@ -75,8 +72,8 @@ public class GuiConfigManager {
     public static GuiMenuConfigWrapper getGuiMenu(String name, boolean readByDb) {
         GuiMenuConfigWrapper wrapper = menuMap.get(name);
         if (readByDb && wrapper == null) {
-            if (!keyConfig.contains(name)) {
-                keyConfig.add(name);
+            if (!menuKeyConfig.contains(name)) {
+                menuKeyConfig.add(name);
                 loadMenuFromYaml(name, WdsjServerAPI.getConfigManager().readKey("Gui#Menu", name, new DatabaseBytesConfigValue()));
                 wrapper = menuMap.get(name);
             }
@@ -86,10 +83,15 @@ public class GuiConfigManager {
 
     public static GuiSignConfigWrapper getGuiSign(String name, boolean readByDb) {
         GuiSignConfigWrapper guiSignConfigWrapper = signMap.get(name);
+
+        System.out.println(" 载入 getsign" + name);
         if (readByDb && guiSignConfigWrapper == null) {
-            if (!keyConfig.contains(name)) {
-                keyConfig.add(name);
-                loadMenuFromYaml(name, WdsjServerAPI.getConfigManager().readKey("Gui#Menu", name, new DatabaseBytesConfigValue()));
+            if (!signKeyConfig.contains(name)) {
+                signKeyConfig.add(name);
+                YamlConfiguration yamlConfiguration = WdsjServerAPI.getConfigManager().readKey("Gui#Sign", name, new DatabaseBytesConfigValue());
+                loadSignFromYaml(name,yamlConfiguration );
+                System.out.println(" 载入 " + yamlConfiguration.getKeys(false));
+
                 guiSignConfigWrapper = signMap.get(name);
             }
         }
@@ -97,7 +99,8 @@ public class GuiConfigManager {
     }
 
     public static void init() {
-        keyConfig.clear();
+        signKeyConfig.clear();
+        menuKeyConfig.clear();
         itemModelMap.clear();
         menuMap.clear();
         commandMap.clear();
