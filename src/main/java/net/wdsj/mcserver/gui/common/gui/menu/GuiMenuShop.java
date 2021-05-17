@@ -10,7 +10,6 @@ import mc233.cn.wdsjlib.global.api.eco.EcoHandler;
 import mc233.cn.wdsjlib.global.api.eco.EcoPointsHandler;
 import mc233.cn.wdsjlib.global.api.eco.data.EcoData;
 import mc233.cn.wdsjlib.global.common.itemstack.ItemCommonBuilder;
-import net.wdsj.mcserver.gui.bukkit.GuiBukkit;
 import net.wdsj.mcserver.gui.common.component.page.GuiMenuLoadedPage;
 import net.wdsj.mcserver.gui.common.item.GuiItemBase;
 import net.wdsj.mcserver.gui.common.item.GuiItemCommon;
@@ -29,7 +28,7 @@ import java.util.List;
  * @version 1.0
  * @date 2020/10/1 21:44
  */
-public abstract class GuiMenuShop<T extends GuiMenuShop.Commodity< ?>, Handler, Item> extends GuiMenuStatic<Handler, Item> {
+public abstract class GuiMenuShop<T extends GuiMenuShop.Commodity<?>, Handler, Item> extends GuiMenuStatic<Handler, Item> implements ShopAmountPreChecker<Handler, T> {
 
     private final Collection<T> items;
 
@@ -70,10 +69,12 @@ public abstract class GuiMenuShop<T extends GuiMenuShop.Commodity< ?>, Handler, 
 
     public GuiItemBase<Handler, Item> buildCommodity(ItemCommonBuilder builder, T commodity) {
         return new GuiItemCommon<Handler, Item>(builder).addActionExecutor(InventoryAction.LEFT, handler -> {
-
-            if (EcoAPI.getInstance().take(MinecraftUtils.getHandlerName(handler), commodity.getEcoHandler(), commodity.getPrice(), 1, commodity.getServers(), String.format("buy %d",  commodity.getName()))) {
-                success(handler, commodity);
+            if (preCheck(handler, commodity , 1)) {
+                if (EcoAPI.getInstance().take(MinecraftUtils.getHandlerName(handler), commodity.getEcoHandler(), commodity.getPrice(), 1, commodity.getServers(), String.format("buy %d", commodity.getName()))) {
+                    success(handler, commodity);
+                }
             }
+
        /*     if (commodity.getEcoHandler().take(MinecraftUtils.getHandlerName(handler), commodity.getPrice(), commodity.getServers(), "buy " + commodity.getName())) {
             success(handler, commodity);
             }*/
@@ -99,7 +100,7 @@ public abstract class GuiMenuShop<T extends GuiMenuShop.Commodity< ?>, Handler, 
     @AllArgsConstructor
     @RequiredArgsConstructor
     @Getter
-    public static class Commodity<V > {
+    public static class Commodity<V> {
 
         private final V value;
 
@@ -107,7 +108,7 @@ public abstract class GuiMenuShop<T extends GuiMenuShop.Commodity< ?>, Handler, 
         private final String name;
 
         @NonNull
-        private final EcoHandler<?>  ecoHandler;
+        private final EcoHandler<?> ecoHandler;
 
         @NonNull
         private final EcoData price;

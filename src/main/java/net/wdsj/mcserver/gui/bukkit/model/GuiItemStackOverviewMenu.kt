@@ -30,6 +30,7 @@ class GuiItemStackOverviewMenu(
         override fun getItemRender(slot: Int, t: ItemStack): GuiItemBase<Player, ItemStack> {
             return GuiItemCommon(ItemCommonBuilder.createFromBukkitItemStack(t))
         }
+
         override fun getFreeSlots(): ImmutableList<Int> {
             return slots
         }
@@ -38,7 +39,7 @@ class GuiItemStackOverviewMenu(
     init {
         page.setUnderEvenlyByPageButton()
         setItem(getInventoryType().size - 1, GuiItemRepository.BACK_MENU_FENCE as GuiItem<Player, ItemStack>)
+        page.loadPage(1)
     }
-
 
 }

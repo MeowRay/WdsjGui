@@ -3,10 +3,10 @@ package net.wdsj.mcserver.gui.common.config
 import mc233.cn.wdsjlib.global.config.ItemStackConfig
 import net.wdsj.servercore.common.placeholder.PlaceholderManager
 import net.wdsj.servercore.compatible.XMaterial
-import net.wdsj.servercore.utils.extensions.isArmor
-import net.wdsj.servercore.utils.extensions.isPotion
-import net.wdsj.servercore.utils.extensions.isTool
-import net.wdsj.servercore.utils.extensions.isWeapon
+import net.wdsj.servercore.utils.extensions.XCompatibleExtension.isArmor
+import net.wdsj.servercore.utils.extensions.XCompatibleExtension.isPotion
+import net.wdsj.servercore.utils.extensions.XCompatibleExtension.isTool
+import net.wdsj.servercore.utils.extensions.XCompatibleExtension.isWeapon
 import java.util.stream.Collectors
 
 /**

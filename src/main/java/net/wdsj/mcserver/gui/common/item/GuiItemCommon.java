@@ -1,6 +1,7 @@
 package net.wdsj.mcserver.gui.common.item;
 
 import com.google.common.collect.Lists;
+import com.meowray.common.KOVColumnEntity;
 import lombok.SneakyThrows;
 import mc233.cn.wdsjlib.global.common.itemstack.ItemCommonBuilder;
 

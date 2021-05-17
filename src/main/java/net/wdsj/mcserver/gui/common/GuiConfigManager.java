@@ -84,13 +84,11 @@ public class GuiConfigManager {
     public static GuiSignConfigWrapper getGuiSign(String name, boolean readByDb) {
         GuiSignConfigWrapper guiSignConfigWrapper = signMap.get(name);
 
-        System.out.println(" 载入 getsign" + name);
         if (readByDb && guiSignConfigWrapper == null) {
             if (!signKeyConfig.contains(name)) {
                 signKeyConfig.add(name);
                 YamlConfiguration yamlConfiguration = WdsjServerAPI.getConfigManager().readKey("Gui#Sign", name, new DatabaseBytesConfigValue());
                 loadSignFromYaml(name,yamlConfiguration );
-                System.out.println(" 载入 " + yamlConfiguration.getKeys(false));
 
                 guiSignConfigWrapper = signMap.get(name);
             }

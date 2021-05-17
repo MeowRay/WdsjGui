@@ -41,13 +41,22 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
     public GuiItemBase<Handler, Item> buildCommodity(ItemCommonBuilder builder, T commodity) {
         return new GuiItemCommon<Handler, Item>(builder).addActionExecutor(InventoryAction.LEFT, handler -> {
             if (commodity.getAmounts().length == 0) {
-                GuiSign<Handler> guiSign = new GuiSign<>(handler, new String[]{"在下方输入购买", commodity.getName() + "的数量", "" + getDefaultAmount(), commodity.getUnit()}, (handler1, lines) -> {
+                GuiSign<Handler> guiSign = new GuiSign<>(handler, new String[]{"在下方输入购买", commodity.getName() + "的数量", "" + commodity.getDefaultAmount(), commodity.getUnit()}, (handler1, lines) -> {
                     String amountStr = lines[2];
                     boolean success = false;
                     if (!amountStr.isEmpty()) {
                         if (NumberUtils.isNumber(amountStr)) {
-                            int amount = NumberUtils.toInt(amountStr);
-                            success = buy(handler, commodity, amount);
+                            int amount = NumberUtils.toInt(amountStr, commodity.getDefaultAmount());
+                            if (amount >commodity.getMaxAmount() ) {
+                                doMaxLimit(handler, commodity);
+                            } else if (amount <=0){
+                                MinecraftUtils.sendMessage(handler, "§c购买数量不能小于1");
+                            }else{
+                                if (preCheck(handler, commodity, amount)) {
+                                    success = buy(handler, commodity, amount);
+                                }
+                            }
+
                         }
                     }
                     doExecuted(handler, success);
@@ -61,7 +70,13 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
                 for (int amount : commodity.getAmounts()) {
                     if (iterator.hasNext()) {
                         guiMenuStatic.setItem(iterator.next(), new GuiItemCommon<Handler, Item>(new ItemCommonBuilder(XMaterial.PAPER).setDisplay(String.format("§e购买%d%s%s", amount, commodity.getUnit(), commodity.getName())).setAmount(amount).addLore("", "§e左键确认购买"))
-                                .addActionExecutor(InventoryAction.LEFT, (h) -> doExecuted(handler, buy(handler, commodity, amount))));
+                                .addActionExecutor(InventoryAction.LEFT, (h) -> {
+                                    boolean success = false;
+                                    if (preCheck(h, commodity, amount)) {
+                                        success = buy(handler, commodity, amount);
+                                    }
+                                    doExecuted(handler, success);
+                                }));
                     } else {
                         break;
                     }
@@ -70,6 +85,7 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
             }
         });
     }
+
 
     public void doExecuted(Handler handler, boolean success) {
         ThreadUtils.delayExecute(new TimerTask() {
@@ -81,9 +97,6 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
     }
 
 
-    public int getDefaultAmount() {
-        return 1;
-    }
 
     public boolean buy(Handler handler, T commodity, int amount) {
         if (amount > 0) {
@@ -97,6 +110,10 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
         return false;
     }
 
+
+    public boolean preCheck(Handler handler, T commodity, int amount) {
+        return true;
+    }
 
     @Override
     public ItemCommonBuilder formatBuilder(ItemCommonBuilder builder, T commodity) {
@@ -112,6 +129,10 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
         super.fail(handler, commodity);
     }
 
+    public void doMaxLimit(Handler handler, T commodity) {
+        MinecraftUtils.sendMessage(handler, String.format("§c你一次性最多只能买 %s %s!", commodity.getMaxAmount(), commodity.getUnit()));
+    }
+
     public abstract void success(Handler handler, int amount, T commodity);
 
 
@@ -120,7 +141,9 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
     @Accessors(chain = true)
     public static class Commodity<V> extends GuiMenuShop.Commodity<V> {
 
+        private int defaultAmount =1;
         private int[] amounts = new int[0];
+        private int maxAmount = 640;
         private String unit = "个";
 
         public Commodity(V value, @NonNull String name, @NonNull EcoHandler<?> ecoHandler, @NonNull EcoData price, List<String> servers) {
