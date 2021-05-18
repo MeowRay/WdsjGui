@@ -301,11 +301,11 @@ public class GuiConfigManager {
 
         if (handler != null) {
             for (GuiItemShowConfig sConfig : config.getDisplayCondition()) {
-                if (sConfig.getAction() != null) {
-                    action = sConfig.getAction();
-                }
                 String condition = MenuUtils.replace(sConfig.getCondition(), config.getStringArgs());
                 if (Strings.isNullOrEmpty(condition) || MenuUtils.scriptExecute(condition, handler, false)) {
+                    if (sConfig.getAction() != null) {
+                        action = sConfig.getAction();
+                    }
                     GuiItemStackConfig preConfig = null;
                     for (int i = 0; i < sConfig.getItem().size(); i++) {
                         GuiItemStackConfig guiItemStackConfig = sConfig.getItem().get(i);

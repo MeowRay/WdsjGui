@@ -94,7 +94,7 @@ public abstract class GuiMenuShop<T extends GuiMenuShop.Commodity<?>, Handler, I
     }
 
     public ImmutableList<Integer> getFreeSlots() {
-        return ImmutableList.copyOf(getFreeSlot(0, getInventoryType().getSize() - 9));
+        return ImmutableList.copyOf(getFreeSlot(0, getInventoryType().getSize() - 18));
     }
 
     @AllArgsConstructor
