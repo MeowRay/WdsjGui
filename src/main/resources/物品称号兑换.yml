@@ -1,0 +1,34 @@
+title: '%servercore_gui-title-prefix%兑换'
+layout:
+  - ''
+  - ''
+  - ''
+  - '        [BACK]'
+construct: ''
+requirement: 'true'
+items:
+  TRASH:
+    repo: 'BACK_MENU_FENCE'
+items:
+  BACK:
+    repo: BACK_MENU_FENCE
+container:
+  g1:
+    range: '2:2-3:8'
+    items:
+      - model: 'item-buy'
+        display:
+          - material: WOODEN_HOE
+            name: '§e兑换农民工称号/7天'
+            lore:
+              - ''
+        args:
+          success:
+            - 'cmd:console:guiitem additem %player_name% 星雨阁:称号 农民工 1 7d'
+          items:
+            - material: CARROT
+              amount: 256
+            - material: POTATO
+              amount: 256
+            - material: WHEAT
+              amount: 256
