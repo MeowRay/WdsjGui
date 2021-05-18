@@ -1,0 +1,317 @@
+title: '%servercore_gui-title-prefix%星雨阁'
+layout:
+  - '[HEAD]      [TRASH][HUB]'
+  - ''
+  - ''
+  - ''
+  - ''
+  - '        [BACK]'
+openCommand: 'menu'
+construct: ''
+parent: 'model-left-cross-pane6x9'
+type: 'INHERIT'
+
+requirement: 'true'
+
+container:
+  up:
+    range: '1:3-1:9'
+    layoutItems:
+      - 'TELEPORT'
+      - 'HOME'
+      - 'PLOT'
+  left:
+    range: '3:1,4:1,5:1,6:1'
+    layoutItems:
+      - 'HELP'
+      - 'EMAIL'
+      - 'POINT'
+      - 'QUICK_HELP'
+  content:
+    range: '3:3-5:9'
+    layoutItems:
+      - 'GIFT'
+      - 'MYPET'
+      - 'RW'
+      - 'NICK'
+      - 'RES'
+      - 'VIP'
+      - 'GIFT_SHOP'
+      - 'PVP'
+      - 'FLY'
+      - 'WB'
+      - 'ENDER_CHEST'
+      - 'SWAP'
+      - 'ITEM_SHOP'
+      - 'TALENT'
+      - 'HEAD_SHOP'
+items:
+  HUB:
+    model: back-to-hub
+  BACK:
+    repo: BACK_MENU_FENCE
+  HEAD:
+    display:
+      - material: PLAYER_HEAD
+        name: '§b欢迎 §e§l%player_name%'
+        lore:
+          - '§7请牢记游戏地址 Wdsj.net'
+          - ''
+          - '§7如有疑问你可以加群询问群号：45666778'
+          - ''
+          - '§7访问网站 top.wdsj.net 即可赞助充值点券哟'
+  TELEPORT:
+    display:
+      - material: GRASS_BLOCK
+        name: '§a✈ 传送'
+        lore:
+          - '§7传送到其他世界、商店、家、地皮、坐标等'
+    action:
+      left:
+        - 'menu:xyg-传送菜单'
+  HOME:
+    display:
+      - material: BED
+        name: '§a✈ 回到家 I'
+        lore:
+          - '§7快速回到家I'
+    action:
+      left:
+        - 'cmd:player:home'
+  PLOT:
+    display:
+      - material: PINK_WOOL
+        name: '§a✈ 回到地皮 I'
+        lore:
+          - '§7快速回到家I'
+    action:
+      left:
+        - 'cmd:console:sc plot %player_name% 1'
+  TRASH:
+    display:
+      - material: COMPOSTER
+        name: '§c回收站'
+        lore:
+          - '§7赶快把东西塞进来拔~'
+          - '§7'
+          - '§f左键: §7打开垃圾桶'
+          - '§f右键: §7清空背包(需二次确认)'
+    action:
+      left:
+        - 'cmd:player:trash open %player_name%'
+      right:
+        - 'cmd:player:trash clear %player_name%'
+  HELP:
+    display:
+      - material: BOOK
+        name: '§e帮助信息'
+        lore:
+          - '§7地皮、领地等使用帮助'
+    action:
+      left:
+        - 'cmd:console:bookbroadcast open xyg_help %player_name%'
+  EMAIL:
+    display:
+      - head: "27506"
+        name: '§e个人邮箱'
+        lore:
+          - '§7查看游戏内的邮箱'
+          - '§7这里有系统发放的奖励、好友、公会的邮件！'
+    action:
+      left:
+        - 'cmd:console:bookbroadcast open xyg_help %player_name%'
+  POINT:
+    display:
+      - material: GLOWSTONE_DUST
+        name: '§e点券赞助'
+        lore:
+          - '§7服务器的运营离不开每个玩家的帮助'
+          - '§7如果您有条件可以选择赞助我哟~_(:з」∠)_'
+          - ''
+          - '§c注: 如在游戏内无法正常扫码等，请访问网址§3§ntop.wdsj.net§c进行赞助'
+          - '§7如有问题请联系 QQ1213530749'
+    action:
+      left:
+        - 'cmd:player:pointweb open'
+  QUICK_HELP:
+    display:
+      - material: ENCHANTED_BOOK
+        name: '§e快捷操作'
+        lore:
+          - '§7快速帮你进行一些操作'
+          - '§7不再记繁琐的指令咯~'
+          - ''
+          - '§c该功能尚未完善，如有建议请联系腐竹~'
+    action:
+      left:
+        - 'cmd:console:bookbroadcast open 生存快捷 %player_name%'
+  GIFT:
+    display:
+      - material: CHEST
+        name: '§e礼包'
+        lore:
+          - '§7每日都可以领取游戏礼包哟，开通会员享有更多特权'
+    action:
+      left:
+        - 'cmd:player:wdsjkit customgui 星雨阁每日礼包'
+  MYPET:
+    display:
+      - material: TURTLE_EGG
+        name: '§e宠物'
+        lore:
+          - '§7打开宠物菜单'
+    action:
+      left:
+        - 'menu:xyg-宠物菜单'
+  RW:
+    display:
+      - material: WRITABLE_BOOK
+        name: '§e任务'
+        lore:
+          - '§7完成任务，获取更多奖励！'
+    action:
+      left:
+        - 'cmd:player:rw 星雨阁'
+  PVP:
+    display:
+      - material: DIAMOND_SWORD
+        name: '§e开启/关闭PVP'
+        lore:
+          - '§7想要干架吗？'
+    action:
+      left:
+        - 'cmd:player:pvp'
+  FLY:
+    display:
+      - material: WOODEN_SWORD
+        amount: -1
+        name: '§c开启/关闭飞行'
+        lore:
+          - '§7你需要会员才能使用该功能'
+    display-condition:
+      - condition: '"%player_has_permission_svip%" == "yes" || "%player_has_permission_ceo%" == "yes"'
+        item:
+          - material: WOODEN_SWORD
+            name: '§e开启/关闭飞行'
+            lore:
+              - '§7点击启用/关闭飞行'
+        action:
+          left:
+            - 'cmd:player:fly'
+    action:
+      left:
+        - ''
+  WB:
+    display:
+      - material: CRAFTING_TABLE
+        amount: -1
+        name: '§c打开工作台'
+        lore:
+          - '§7你需要会员才能使用该功能'
+    display-condition:
+      - condition: '"%player_has_permission_vip%"=="yes" || "%player_has_permission_svip%" == "yes" || "%player_has_permission_ceo%" == "yes"'
+        item:
+          - material: CRAFTING_TABLE
+            name: '§e打开工具台'
+            lore:
+              - '§7点击打开随时随地工具台'
+        action:
+          left:
+            - 'cmd:player:workbench'
+    action:
+      left:
+        - ''
+  ENDER_CHEST:
+    display:
+      - material: ENDER_CHEST
+        amount: -1
+        name: '§c打开末影箱'
+        lore:
+          - '§7你需要会员才能使用该功能'
+    display-condition:
+      - condition: '"%player_has_permission_vip%"=="yes" || "%player_has_permission_svip%" == "yes" || "%player_has_permission_ceo%" == "yes"'
+        item:
+          - material: ENDER_CHEST
+            name: '§e打开末影箱'
+            lore:
+              - '§7点击打开随时随地工具台'
+        action:
+          left:
+            - 'cmd:player:enderchest'
+    action:
+      left:
+        - ''
+  SWAP:
+    display:
+      - material: BOWL
+        name: '§e兑换'
+        lore:
+          - '§7兑换一些物品'
+    action:
+      left:
+        - 'menu:xyg-exchange'
+  NICK:
+    display:
+      - material: NAME_TAG
+        name: '§e称号'
+        lore:
+          - '§7选择设置一个星雨阁称号吧~'
+    action:
+      left:
+        - 'cmd:console:guiitem 星雨阁:称号 %player_name%'
+  RES:
+    display:
+      - material: REDSTONE
+        name: '§e领地设置'
+        lore:
+          - '§7需要在你的地皮上使用'
+    action:
+      left:
+        - 'cmd:player: res set'
+  VIP:
+    display:
+      - material: DIAMOND
+        name: '§e购买会员'
+        lore:
+          - '§7想获得更好的游戏体验吗？'
+          - '§7来个会员吧'
+    action:
+      left:
+        - 'menu:xyg-会员菜单'
+  GIFT_SHOP:
+    display:
+      - material: CHEST
+        name: '§e购买礼包'
+        lore:
+          - '§7各种各样的礼包为你助力！'
+    action:
+      left:
+        - 'cmd:player:wdsjkit customgui 星雨阁礼包商店'
+  ITEM_SHOP:
+    display:
+      - material: DIAMOND_PICKAXE
+        name: '§e装备商店'
+        lore:
+          - '§7想要获得NB的装备吗？'
+    action:
+      left:
+        - 'cmd:console:kititemshop openshop 星雨阁装备商店 %player_name%'
+  TALENT:
+    display:
+      - material: POTION
+        name: '§e天赋'
+        lore:
+          - '§7超叼天赋！'
+          - '§7旧版新版生存服全通用'
+    action:
+      left:
+        - 'cmd:player:abilities menu'
+  HEAD_SHOP:
+    display:
+      - material: PLAYER_HEAD
+        name: '§e头颅商店'
+        lore:
+          - '§7这里有各种各样的头颅！'
+    action:
+      left:
+        - 'menu:xyg-头颅商店'
