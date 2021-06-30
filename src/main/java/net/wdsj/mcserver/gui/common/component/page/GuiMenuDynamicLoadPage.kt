@@ -3,38 +3,50 @@ package net.wdsj.mcserver.gui.common.component.page
 import com.meowray.common.page.PageMeow
 import com.meowray.common.page.PageQuery
 import net.wdsj.mcserver.gui.common.gui.menu.GuiMenuStatic
-import net.wdsj.servercore.interfaces.Executor
 
 /**
  * @author MeowRay
  * @version 1.0
  * @date 2021/5/17 21:20
  */
-abstract class GuiMenuDynamicLoadPage<T, Handler, Item>(
-    guiMenu: GuiMenuStatic<Handler, Item>, val pageQuery: PageQuery<T>, preSlot: Int,
-    nextSlot: Int
-) : GuiMenuPage<T, Handler, Item>(
-    guiMenu, preSlot, nextSlot
-) {
-    val pageMeow = PageMeow(pageQuery, freeSlots.size)
+abstract class GuiMenuDynamicLoadPage<T, Handler, Item>  : GuiMenuPage<T, Handler, Item>
+ {
+      private val pageMeow: PageMeow<T>
 
-    init {
-        pageMeow.nextPage()
+     constructor(
+        guiMenu: GuiMenuStatic<Handler, Item>,  pageQuery: PageQuery<T>, preSlot: Int,
+        nextSlot: Int) : super(guiMenu, preSlot, nextSlot) {
+         pageMeow = PageMeow(pageQuery, freeSlots.size )
     }
 
+    constructor(  guiMenu: GuiMenuStatic<Handler, Item>,   pageQuery: PageMeow<T>, preSlot: Int,
+        nextSlot: Int) :  super(guiMenu,preSlot,nextSlot){
+            this.pageMeow = pageQuery
+    }
+
+     override fun loadPage(page: Int) {
+         pageMeow.getPageLoad(page)
+         super.loadPage(page)
+     }
+
+
+/*
     override fun PreClick(): Executor<Handler> {
         return Executor {
-            pageMeow.prePage()
+            pageMeow.getPageLoad(openPage -1)
+         //   pageMeow.prePage()
             super.PreClick().execute(it)
         }
     }
 
     override fun NextClick(): Executor<Handler> {
         return Executor {
-            pageMeow.nextPage()
+            pageMeow.getPageLoad(openPage +1)
+        //    pageMeow.nextPage()
             super.NextClick().execute(it)
         }
     }
+*/
 
 
     override fun getContent(p0: Int): T? {

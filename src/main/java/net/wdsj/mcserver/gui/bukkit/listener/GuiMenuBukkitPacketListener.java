@@ -1,6 +1,7 @@
 package net.wdsj.mcserver.gui.bukkit.listener;
 
 import com.comphenix.packetwrapper.WrapperPlayClientWindowClick;
+import com.comphenix.packetwrapper.wrapper.WrapperXPlayClientWindowClick;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
@@ -50,7 +51,7 @@ public class GuiMenuBukkitPacketListener extends PacketAdapter {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
         if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
-            WrapperPlayClientWindowClick windowClick = new WrapperPlayClientWindowClick(event.getPacket());
+            WrapperXPlayClientWindowClick windowClick =WrapperXPlayClientWindowClick.build(event.getPacket()) ;
         //    if (true) {
         //        GuiBukkit.getInstance().getLogger().info(String.format(
         //                "id:%d mode: %s button: %d action: %d slot: %d item:%s", windowClick.getWindowId(), windowClick.getShift().name(), windowClick.getButton(), windowClick.getActionNumber(), windowClick.getSlot(), windowClick.getClickedItem()));

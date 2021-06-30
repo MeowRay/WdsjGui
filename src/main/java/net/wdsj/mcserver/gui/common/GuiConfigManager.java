@@ -6,25 +6,29 @@ import com.google.common.base.Strings;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import javafx.util.Pair;
+import mc233.cn.wdsjlib.global.common.itemstack.ItemCommonBuilder;
 import net.wdsj.common.simpleconfig.ConfigurationSection;
 import net.wdsj.common.simpleconfig.file.YamlConfiguration;
 import net.wdsj.mcserver.gui.common.config.GuiItemModelRenderConfig;
 import net.wdsj.mcserver.gui.common.config.GuiItemRenderConfig;
 import net.wdsj.mcserver.gui.common.config.GuiItemShowConfig;
 import net.wdsj.mcserver.gui.common.config.GuiItemStackConfig;
+import net.wdsj.mcserver.gui.common.creator.GuiItemCommonConfigCreator;
 import net.wdsj.mcserver.gui.common.creator.GuiItemConfigCreator;
 import net.wdsj.mcserver.gui.common.creator.GuiItemExecutorCreator;
 import net.wdsj.mcserver.gui.common.creator.GuiSignExecutorCreator;
-import net.wdsj.mcserver.gui.common.execption.GuiItemCreatorNotFoundException;
 import net.wdsj.mcserver.gui.common.executor.GuiItemExecutor;
 import net.wdsj.mcserver.gui.common.executor.GuiItemExecutorCollection;
+import net.wdsj.mcserver.gui.common.extra.GuiExtraManager;
+import net.wdsj.mcserver.gui.common.extra.viewexector.GuiItemViewExecutor;
+import net.wdsj.mcserver.gui.common.extra.viewexector.GuiItemViewExecutorConfigCreator;
 import net.wdsj.mcserver.gui.common.item.GuiItem;
 import net.wdsj.mcserver.gui.common.item.GuiItemBase;
 import net.wdsj.mcserver.gui.common.repo.GuiItemRepository;
 import net.wdsj.mcserver.gui.common.utils.MenuUtils;
 import net.wdsj.mcserver.gui.common.wrapper.GuiMenuConfigWrapper;
 import net.wdsj.mcserver.gui.common.wrapper.GuiSignConfigWrapper;
-import net.wdsj.mcserver.gui.common.wrapper.GuiWrapper;
+import net.wdsj.mcserver.gui.common.wrapper.CanOpenItem;
 import net.wdsj.servercore.WdsjServerAPI;
 import net.wdsj.servercore.config.invoke.ConfigInvoke;
 import net.wdsj.servercore.database.frame.box.value.bytes.ymal.DatabaseBytesConfigValue;
@@ -52,7 +56,7 @@ public class GuiConfigManager {
 
     private static final Map<String, GuiItemConfigCreator<?, ?>> itemCreatorMap = new THashMap<>();
 
-    private static final Map<String, GuiWrapper> commandMap = new HashMap<>();
+    private static final Map<String, CanOpenItem> commandMap = new HashMap<>();
 
     private static final Map<String, GuiMenuConfigWrapper> menuMap = new THashMap<>();
 
@@ -81,14 +85,25 @@ public class GuiConfigManager {
         return wrapper;
     }
 
+    public static GuiMenuConfigWrapper getGuiMenuByServer(String name, boolean readByDb) {
+        GuiMenuConfigWrapper wrapper = menuMap.get(name);
+        if (readByDb && wrapper == null) {
+            if (!menuKeyConfig.contains(name)) {
+                menuKeyConfig.add(name);
+                loadMenuFromYaml(name, WdsjServerAPI.getConfigManager().readServerConfigGroupOrGlobal("Gui#Menu", name, new DatabaseBytesConfigValue()));
+                wrapper = menuMap.get(name);
+            }
+        }
+        return wrapper;
+    }
+
     public static GuiSignConfigWrapper getGuiSign(String name, boolean readByDb) {
         GuiSignConfigWrapper guiSignConfigWrapper = signMap.get(name);
-
         if (readByDb && guiSignConfigWrapper == null) {
             if (!signKeyConfig.contains(name)) {
                 signKeyConfig.add(name);
                 YamlConfiguration yamlConfiguration = WdsjServerAPI.getConfigManager().readKey("Gui#Sign", name, new DatabaseBytesConfigValue());
-                loadSignFromYaml(name,yamlConfiguration );
+                loadSignFromYaml(name, yamlConfiguration);
 
                 guiSignConfigWrapper = signMap.get(name);
             }
@@ -108,6 +123,20 @@ public class GuiConfigManager {
         YamlConfiguration modelGlobalYaml = WdsjServerAPI.getConfigManager().readMain("Gui#Model", new DatabaseBytesConfigValue());
         YamlConfiguration signGlobalYaml = WdsjServerAPI.getConfigManager().readMain("Gui#Sign", new DatabaseBytesConfigValue());
         YamlConfiguration signYaml = WdsjServerAPI.getConfigManager().readServerGroup("Gui#Sign", new DatabaseBytesConfigValue());
+
+        WdsjServerAPI.getBungeeServerModel().getGroup().forEach(s -> {
+                    YamlConfiguration signConfig = WdsjServerAPI.getConfigManager().readServer("Gui#Sign", "group:" + s, new DatabaseBytesConfigValue());
+                    if (signConfig != null) {
+                        loadSignFromYaml(signConfig);
+                        LOGGER.info("加载SIGN BY GROUP: " + s);
+                    }
+                    YamlConfiguration menuConfig = WdsjServerAPI.getConfigManager().readServer("Gui#Menu", "group:" + s, new DatabaseBytesConfigValue());
+                    if (menuConfig != null) {
+                        loadMenuFromYaml(menuConfig);
+                        LOGGER.info("加载MENU BY GROUP: " + s);
+                    }
+                }
+        );
         if (modelGlobalYaml != null) {
             int i = loadModelFromYaml(modelGlobalYaml);
             LOGGER.info(String.format("加载了全局模板: %d个", i));
@@ -132,6 +161,26 @@ public class GuiConfigManager {
             int i = loadSignFromYaml(signYaml);
             LOGGER.info(String.format("加载了木牌: %d个", i));
         }
+        GuiExtraManager.registerItemCaller("model", new GuiItemViewExecutorConfigCreator() {
+            @Override
+            public <Handler> GuiItemViewExecutor<Handler> get(ConfigurationSection key) {
+                GuiItemModelRenderConfig model = itemModelMap.get(key.getString("model"));
+                if (model == null) throw new NullPointerException();
+                GuiItemRenderConfig renderConfig = ConfigInvoke.invoke(GuiItemRenderConfig.class, key);
+                setMergeModelRenderConfig(model, renderConfig);
+                return new GuiItemViewExecutor<Handler>() {
+                    @Override
+                    public void execute(Handler handler) {
+
+                    }
+
+                    @Override
+                    public List<GuiItem<?, ?>> getItems(Handler handler) {
+                        return getGuiItemRender(handler, renderConfig);
+                    }
+                };
+            }
+        });
     }
 
     public static int loadModelFromYaml(ConfigurationSection section) {
@@ -263,11 +312,13 @@ public class GuiConfigManager {
             return getGuiItemRender(getItemCreator("BUKKIT"), handler, config);
         } else if (WdsjServerAPI.getServerType().isBungee()) {
             return getGuiItemRender(getItemCreator("BUNGEE"), handler, config);
+        } else {
+            return getGuiItemRender(getItemCreator("COMMON"), handler, config);
         }
-        throw new GuiItemCreatorNotFoundException("default");
+        //throw new GuiItemCreatorNotFoundException("default");
     }
 
-    public static GuiWrapper getCommandGuiWrapper(String command) {
+    public static CanOpenItem getCommandGuiWrapper(String command) {
         return commandMap.get(command);
     }
 
@@ -339,7 +390,7 @@ public class GuiConfigManager {
 
         }
         for (GuiItem<?, ?> item : items) {
-            setGuiItemAction(item, action , config.getArgs());
+            setGuiItemAction(item, action, config.getArgs());
         }
         if (pair != null) {
             staticGuiItemRender.put(pair, items);
@@ -391,5 +442,9 @@ public class GuiConfigManager {
         return (GuiItemConfigCreator<Handler, Item>) itemCreatorMap.get(key);
     }
 
+
+    static {
+        registerItemCreator("COMMON", new GuiItemCommonConfigCreator<>());
+    }
 
 }

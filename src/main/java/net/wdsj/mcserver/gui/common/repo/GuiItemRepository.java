@@ -2,9 +2,6 @@ package net.wdsj.mcserver.gui.common.repo;
 
 import mc233.cn.wdsjlib.bukkit.repository.HeadRepository;
 import mc233.cn.wdsjlib.global.common.itemstack.ItemCommonBuilder;
-import net.wdsj.mcserver.gui.common.Gui;
-import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu;
-import net.wdsj.mcserver.gui.common.GuiData;
 import net.wdsj.mcserver.gui.common.GuiManager;
 import net.wdsj.mcserver.gui.common.item.GuiItem;
 import net.wdsj.mcserver.gui.common.item.GuiItemBase;
@@ -22,9 +19,11 @@ public class GuiItemRepository {
     public static final GuiItemBase PLACEHOLDER_BLACK_GLASS_PANE = new GuiItemCommon<>(new ItemCommonBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setDisplay("§7§oWdsj.net"));
 
     public static final GuiItemBase QUIT_MENU_FENCE = new GuiItemCommon<>(new ItemCommonBuilder(XMaterial.OAK_FENCE_GATE).setDisplay("§c✈ 关闭")).addActionExecutor(InventoryAction.LEFT, o -> GuiManager.close(o));
-    ;
+
     public static final GuiItemBase QUIT_MENU_ARROW = new GuiItemCommon(ItemCommonBuilder.createHeadFromRepo(HeadRepository.WHITE_ARROW_RIGHT_DOWN.getKey()).setDisplay("§c✈ 关闭")).addActionExecutor(InventoryAction.LEFT, o -> GuiManager.close((o)));
-    ;
+
+
+    public static final  GuiItemBase CLOSE_BARRIER =  new GuiItemCommon<>(new ItemCommonBuilder(XMaterial.BARRIER).setDisplay("§c关闭")).addActionExecutor(InventoryAction.LEFT, o -> GuiManager.close(o));
 
     public static final GuiItemBase BACK_MENU_FENCE = new GuiItemCommon(new ItemCommonBuilder(XMaterial.OAK_FENCE_GATE).setDisplay("§c✈ 返回")).addActionExecutor(InventoryAction.LEFT, o -> {
         if (!GuiManager.openHistory(o, true, 2)) {
@@ -32,7 +31,7 @@ public class GuiItemRepository {
         }
     });
 
-    public static final GuiItemBase BACK_MENU_RIGHT = new GuiItemCommon(ItemCommonBuilder.createHeadFromRepo(HeadRepository.WHITE_ARROW_RIGHT.getKey()).setDisplay("§c✈ 返回")).addActionExecutor(InventoryAction.LEFT, o -> {
+    public static final GuiItemBase BACK_MENU_RIGHT = new GuiItemCommon(ItemCommonBuilder.createHeadFromRepo(HeadRepository.WHITE_ARROW_RIGHT_DOWN.getKey()).setDisplay("§c✈ 返回")).addActionExecutor(InventoryAction.LEFT, o -> {
         if (!GuiManager.openHistory(o, true, 2)) {
             GuiManager.close(o);
         }

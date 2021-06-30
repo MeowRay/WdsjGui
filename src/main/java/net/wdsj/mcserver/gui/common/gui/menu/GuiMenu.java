@@ -126,7 +126,7 @@ public class GuiMenu<Handler, Item> implements Gui<Handler> {
         for (GuiMenuRenderItem<Handler, Item> guiMenuRenderItem : guiMenuRenderItems) {
             guiMenuRenderItemIntegerMap.put(guiMenuRenderItem, guiMenuRenderItem.getRenderItem().getSlot());
         }
-        for (int i = start; i <= end; i++) {
+        for (int i = start; i < end; i++) { // 蒜头不算尾 <= 算尾
             if (!guiMenuRenderItemIntegerMap.containsValue(i)) {
                 list.add(i);
             }

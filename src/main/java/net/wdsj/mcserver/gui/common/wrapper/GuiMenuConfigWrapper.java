@@ -17,25 +17,27 @@ import java.util.Map;
  * @version 1.0
  * @date 2018/8/29 12:00
  */
-public class GuiMenuConfigWrapper implements GuiWrapper {
+public class GuiMenuConfigWrapper implements CanOpenItem {
 
     @Getter
     private final GuiMenuConfigModel guiMenuConfigModel;
     @Getter
     private final GuiMenuMainConfig guiMenuMainConfig;
+    private final boolean permissionBypass ;
 
 
 
     public GuiMenuConfigWrapper(ConfigurationSection section) {
         guiMenuMainConfig = ConfigInvoke.invoke(GuiMenuMainConfig.class, section);
         guiMenuConfigModel = new GuiMenuConfigModel(guiMenuMainConfig);
+        permissionBypass = guiMenuMainConfig.getRequirement().equals("true");
     }
 
 
 
     @Override
     public boolean requirementCanOpen(Object handler) {
-        return MenuUtils.scriptExecute(guiMenuMainConfig.getRequirement(), handler, false);
+        return permissionBypass|| MenuUtils.scriptExecute(guiMenuMainConfig.getRequirement(), handler, false);
     }
 
     @Override

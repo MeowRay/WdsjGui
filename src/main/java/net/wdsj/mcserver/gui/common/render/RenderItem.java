@@ -11,8 +11,12 @@ import net.wdsj.mcserver.gui.common.item.GuiItem;
  */
 
 @Getter
-@AllArgsConstructor
 public class RenderItem<Handler, Item> {
+
+    public RenderItem(int slot, GuiItem<Handler, Item> guiItem) {
+        this.slot = slot;
+        this.guiItem = guiItem;
+    }
 
     private final int slot;
     private final GuiItem<Handler, Item> guiItem;

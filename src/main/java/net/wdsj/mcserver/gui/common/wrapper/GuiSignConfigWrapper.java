@@ -12,7 +12,6 @@ import net.wdsj.mcserver.gui.common.model.GuiSignConfigModel;
 import net.wdsj.mcserver.gui.common.utils.MenuUtils;
 import net.wdsj.servercore.config.invoke.ConfigInvoke;
 import net.wdsj.servercore.utils.PlaceholderUtils;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Map;
 
@@ -22,13 +21,15 @@ import java.util.Map;
  * @date 2018/9/6 14:52
  */
 @Getter
-public class GuiSignConfigWrapper implements GuiWrapper {
+public class GuiSignConfigWrapper implements CanOpenItem {
 
     private final GuiSignMainConfig config;
     private final GuiSignConfigModel guiSignConfigModel;
+    private final boolean permissionBypass ;
 
     public GuiSignConfigWrapper(ConfigurationSection section) {
         config = ConfigInvoke.invoke(GuiSignMainConfig.class, section);
+        permissionBypass = config.getRequirement().equals("true");
         guiSignConfigModel = new GuiSignConfigModel(config) {
             @Override
             public GuiSignExecutor getExecutor(Object o, Map replaceMap) {
@@ -57,7 +58,7 @@ public class GuiSignConfigWrapper implements GuiWrapper {
 
     @Override
     public boolean requirementCanOpen(Object handler) {
-        return MenuUtils.scriptExecute(config.getRequirement(), handler, false);
+        return permissionBypass|| MenuUtils.scriptExecute(config.getRequirement(), handler, false);
     }
 
 

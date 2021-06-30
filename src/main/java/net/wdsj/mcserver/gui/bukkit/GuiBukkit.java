@@ -12,6 +12,7 @@ import net.wdsj.mcserver.gui.bukkit.command.GuiAdminCommand;
 import net.wdsj.mcserver.gui.bukkit.command.GuiPlayerCommand;
 import net.wdsj.mcserver.gui.bukkit.creator.GuiItemBukkitConfigCreator;
 import net.wdsj.mcserver.gui.bukkit.executor.*;
+import net.wdsj.mcserver.gui.bukkit.listener.ExecutorItemListener;
 import net.wdsj.mcserver.gui.bukkit.listener.GuiMenuBukkitPacketListener;
 import net.wdsj.mcserver.gui.bukkit.listener.GuiMenuListener;
 import net.wdsj.mcserver.gui.bukkit.listener.GuiSignBukkitPacketListener;
@@ -73,6 +74,7 @@ public final class GuiBukkit extends JavaPlugin {
 
         final GuiMenuTask guiMenuTask = new GuiMenuTask(2);
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, guiMenuTask, 20, 2);
+        Bukkit.getPluginManager().registerEvents(new ExecutorItemListener(), this);
 
         //
         GuiConfigManager.registerItemCreator("BUKKIT", new GuiItemBukkitConfigCreator());
@@ -83,10 +85,10 @@ public final class GuiBukkit extends JavaPlugin {
         GuiConfigManager.registerMenuExecutorCreator("close", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemBukkitCloseExecutor());
         GuiConfigManager.registerMenuExecutorCreator("msg", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemMessageExecutor(args));
         GuiConfigManager.registerMenuExecutorCreator("lang-msg", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemLanguageMessageExecutor(args));
-        GuiConfigManager.registerMenuExecutorCreator("js", (GuiItemExecutorCreator<Player>) (args, argsMap) -> new GuiItemBukkitJavaScriptExecutor(args , argsMap));
-        GuiConfigManager.registerMenuExecutorCreator("cmd", (GuiItemExecutorCreator<Player>) (args,map) -> new GuiItemBukkitCommandExecutor(false,args));
-        GuiConfigManager.registerMenuExecutorCreator("cmd-async", (GuiItemExecutorCreator<Player>) (args,map) -> new GuiItemBukkitCommandExecutor(true,args));
-        GuiConfigManager.registerMenuExecutorCreator("title", (GuiItemExecutorCreator<Player>)  (args, map)  -> new GuiItemBukkitTitleExecutor(args));
+        GuiConfigManager.registerMenuExecutorCreator("js", (GuiItemExecutorCreator<Player>) (args, argsMap) -> new GuiItemBukkitJavaScriptExecutor(args, argsMap));
+        GuiConfigManager.registerMenuExecutorCreator("cmd", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemBukkitCommandExecutor(false, args));
+        GuiConfigManager.registerMenuExecutorCreator("cmd-async", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemBukkitCommandExecutor(true, args));
+        GuiConfigManager.registerMenuExecutorCreator("title", (GuiItemExecutorCreator<Player>) (args, map) -> new GuiItemBukkitTitleExecutor(args));
         GuiConfigManager.registerMenuExecutorCreator("sound", (GuiItemExecutorCreator<Player>) (args, map) -> {
             String[] split = args.split("-", 3);
             String n = ArrayUtils.get(split, 0);
@@ -98,19 +100,19 @@ public final class GuiBukkit extends JavaPlugin {
         //SIGN CREATOR
         GuiConfigManager.registerSignExecutorCreator("command", (GuiSignExecutorCreator<Player>) args -> new GuiSignBukkitCommandExecutor(args, false));
 
-        MenuUtils.putScriptObject("eco" , EcoAPI.getInstance());
-        MenuUtils.putScriptObject("title" , WdsjLib.getInstance().getTitleAPI());
-        MenuUtils.putScriptObject("bossbar" , WdsjLib.getInstance().getBossBarAPI());
+        MenuUtils.putScriptObject("eco", EcoAPI.getInstance());
+        MenuUtils.putScriptObject("title", WdsjLib.getInstance().getTitleAPI());
+        MenuUtils.putScriptObject("bossbar", WdsjLib.getInstance().getBossBarAPI());
 
-        MenuUtils.putScriptObject("itemconfig" , ItemStackConfig.class);
+        MenuUtils.putScriptObject("itemconfig", ItemStackConfig.class);
 
         GuiConfigManager.init();
 
         GuiManager.setGuiMenuFunction((GuiMenuFunction<Player>) this::close);
 
 
-    //   Bukkit.getScheduler().runTaskLater(this , ()->{
-    //   } , 20);
+        //   Bukkit.getScheduler().runTaskLater(this , ()->{
+        //   } , 20);
 
     }
 

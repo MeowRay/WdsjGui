@@ -13,8 +13,11 @@ import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu
 import net.wdsj.mcserver.gui.common.gui.menu.GuiMenuStatic
 import net.wdsj.mcserver.gui.common.item.GuiItemBase
 import net.wdsj.mcserver.gui.common.item.GuiItemCommon
+import net.wdsj.mcserver.gui.common.utils.TemplateUtils.Companion.setLastBackButton
 import net.wdsj.mcserver.gui.common.utils.TemplateUtils.Companion.setUnderEvenlyByPageButton
 import net.wdsj.mcserver.langutils.lang.convert.EnumLang
+import net.wdsj.servercore.compatible.XEnchantment
+import net.wdsj.servercore.compatible.XItemFlag
 import net.wdsj.servercore.compatible.XMaterial
 import net.wdsj.servercore.eunm.inventory.InventoryAction
 import net.wdsj.servercore.eunm.inventory.InventoryType
@@ -27,14 +30,18 @@ import kotlin.reflect.KClass
  * @date  2021/4/27 13:02
  * @version 1.0
  */
-open class StatusMenu<T : Any, O : Any>(
+open class StatusMenu<O : Any> @JvmOverloads constructor(
     owner: O,
     val kovC: KOVHandlerCache<Long>,
-    val list: List<KOVColumnEntity<T>>,
+    val list: List<KOVColumnEntity<*>>,
     val manager: KOVStatusGuiManager = KOVStatusGuiManager.INSTANCE,
     title: String = CustomGuiManager.getTitleDomainPrefix() + "设定"
 ) :
-    GuiMenuStatic<O, ItemStack>(owner, InventoryType.GENERIC_9X6, title) {
+    GuiMenuStatic<O, ItemStack>(
+        owner,
+        if (list.size > 12) InventoryType.GENERIC_9X6 else InventoryType.GENERIC_9X5,
+        title
+    ) {
 
     init {
 
@@ -43,15 +50,18 @@ open class StatusMenu<T : Any, O : Any>(
     }
 
     open fun layoutInitialization() {
-         val page = Page(this)
+        val i = inventoryType.size / 9
+        val page = Page(this, ImmutableList.copyOf(getFreeSlot(2, 2, 9, i - 1)))
+
         page.loadPage(1)
         page.setUnderEvenlyByPageButton()
+        setLastBackButton()
     }
 
 }
 
-class Page<T : Any, O : Any>(
-    val menu: StatusMenu<T, O>,
+class Page<O : Any>(
+    val menu: StatusMenu<O>,
     val container: ImmutableList<Int> = ImmutableList.copyOf(
         menu.getFreeSlot(
             0,
@@ -59,10 +69,10 @@ class Page<T : Any, O : Any>(
         )
     )
 ) :
-    GuiMenuPage<KOVColumnEntity<T>, O, ItemStack>(menu, 48, 50) {
+    GuiMenuPage<KOVColumnEntity<*>, O, ItemStack>(menu, 48, 50) {
 
 
-    override fun getContent(p0: Int): KOVColumnEntity<T> {
+    override fun getContent(p0: Int): KOVColumnEntity<*> {
         return menu.list[p0]
     }
 
@@ -70,8 +80,11 @@ class Page<T : Any, O : Any>(
         return menu.list.size
     }
 
-    override fun getItemRender(slot: Int, entity: KOVColumnEntity<T>): GuiItemBase<O, ItemStack> {
-        val itemRender = menu.manager.getItemRender<O, ItemStack>(menu.owner, menu.kovC, entity)
+    override fun getItemRender(slot: Int, entity: KOVColumnEntity<*>): GuiItemBase<O, ItemStack> {
+        val itemRender = menu.manager.getItemRender<O, ItemStack>(
+            menu.owner, menu.kovC,
+            entity as KOVColumnEntity<out Any>
+        )
         return itemRender.apply {
             addActionExecutor(InventoryAction.LEFT) {
                 menu.setItem(slot, getItemRender(slot, entity))
@@ -90,7 +103,10 @@ class Page<T : Any, O : Any>(
 class KOVStatusGuiManager {
 
     companion object {
+        @JvmField
         val INSTANCE = KOVStatusGuiManager()
+
+        @JvmField
         val BOOLEAN_CONTROL = object : ItemControl<Any, Boolean> {
             override fun exec(
                 guiitem: GuiItemCommon<*, *>,
@@ -129,7 +145,7 @@ class KOVStatusGuiManager {
     }
 
     private val TYPE_MAP = mutableMapOf<KClass<*>, ItemControl<*, *>>()
-    private val ITEM_MAP = mutableMapOf<KOVColumnEntity<*>, ItemCommonBuilder>()
+    private val ITEM_MAP = mutableMapOf<KOVColumnEntity<*>, KOVGuiItemRender<Any, Any>>()
 
 
     @Synchronized
@@ -141,8 +157,8 @@ class KOVStatusGuiManager {
     fun unregisterTypeControl(kClass: KClass<*>) = TYPE_MAP.remove(kClass)
 
     @Synchronized
-    fun registerItem(entity: KOVColumnEntity<out Any>, builder: ItemCommonBuilder) {
-        ITEM_MAP[entity] = builder
+    fun <T : Any, H : Any> registerItem(entity: KOVColumnEntity<out T>, builder: KOVGuiItemRender<T, H>) {
+        ITEM_MAP[entity] = builder as KOVGuiItemRender<Any, Any>
     }
 
     @Synchronized
@@ -156,9 +172,11 @@ class KOVStatusGuiManager {
         cache: KOVHandlerCache<*>,
         entity: KOVColumnEntity<out Any>
     ): GuiItemBase<H, I> {
-        val value = cache.get(entity, false)
-        val builder: ItemCommonBuilder =
-            (ITEM_MAP[entity] ?: ItemCommonBuilder(XMaterial.STONE).apply { display = "NO DEFINE" }).clone()
+        val value: Any
+        value = cache.get(entity, false)
+        val function =
+            ITEM_MAP[entity] ?: { a, b -> ItemCommonBuilder(XMaterial.STONE).apply { display = "NO DEFINE" } }
+        val builder = function(value, handler)
 
 
         val itemCommon = GuiItemCommon<H, I>(builder)
@@ -185,6 +203,8 @@ class KOVStatusGuiManager {
 
 }
 
+typealias KOVGuiItemRender <T, H> = (T, H) -> ItemCommonBuilder
+
 interface ItemControl<H, V> {
     fun exec(
         guiitem: GuiItemCommon<*, *>,
@@ -194,5 +214,38 @@ interface ItemControl<H, V> {
         handler: H,
         value: V
     )
+
+}
+
+object KOVStatusMenuUtils {
+
+    @JvmStatic
+    fun createBaseBooleanItemRender(
+        builder: ItemCommonBuilder,
+        format: String
+    ): KOVGuiItemRender<Boolean, Any> {
+        return createBaseBooleanItemRender(builder, builder, format)
+    }
+
+    @JvmStatic
+    fun createBaseBooleanItemRender(
+        onBuilder: ItemCommonBuilder,
+        offBuilder: ItemCommonBuilder,
+        format: String
+    ): KOVGuiItemRender<Boolean, Any> {
+        return { s, _ ->
+            (if (s) onBuilder else offBuilder).clone().apply {
+                if (s) {
+                    addLore(format.format("启用"))
+                    addEnchant(XEnchantment.DURABILITY, 1)
+                    addItemFlag(XItemFlag.HIDE_ENCHANTMENTS)
+                    addItemFlag(XItemFlag.HIDE_ATTRIBUTES)
+                } else {
+                    addLore(format.format("禁用"))
+                }
+            }
+
+        }
+    }
 
 }

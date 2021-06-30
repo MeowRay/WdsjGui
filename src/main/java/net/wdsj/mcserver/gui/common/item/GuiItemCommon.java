@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
  */
 public class GuiItemCommon<Handler, Item> extends GuiItemBase<Handler, Item> {
 
-
     private ItemCommonBuilder builder;
 
     public GuiItemCommon(ItemCommonBuilder builder) {

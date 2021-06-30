@@ -7,7 +7,7 @@ import java.util.Map;
  * @version 1.0
  * @date 2018/9/10 22:04
  */
-public interface GuiWrapper {
+public interface CanOpenItem {
 
      boolean requirementCanOpen(Object handler);
 

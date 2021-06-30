@@ -27,7 +27,7 @@ public abstract class GuiItemBase<Handler, Item> implements GuiItem<Handler, Ite
     @Getter
     private Set<Replacement<Handler>> replacements = new THashSet<>();
 
-    private Multimap<InventoryAction, Executor<Handler>> executorMultimap = LinkedHashMultimap.create();
+    private Multimap<InventoryAction, Executor<Handler>> executorMap = LinkedHashMultimap.create();
 
 
     public GuiItemBase<Handler, Item> addReplacement(Replacement<Handler> replacement) {
@@ -41,22 +41,22 @@ public abstract class GuiItemBase<Handler, Item> implements GuiItem<Handler, Ite
     }
 
     public GuiItemBase<Handler, Item>   addActionExecutor(InventoryAction inventoryAction, Executor<Handler> executor) {
-        executorMultimap.put(inventoryAction, executor);
+        executorMap.put(inventoryAction, executor);
         return this;
     }
 
     public GuiItemBase<Handler, Item> removeActionExecutor(InventoryAction inventoryAction, Executor<Handler> executor) {
-        executorMultimap.remove(inventoryAction, executor);
+        executorMap.remove(inventoryAction, executor);
         return this;
     }
 
     public GuiItemBase<Handler, Item> removeActionExecutorAll(InventoryAction inventoryAction) {
-        executorMultimap.removeAll(inventoryAction);
+        executorMap.removeAll(inventoryAction);
         return this;
     }
 
     public GuiItemBase<Handler, Item> removeAllExecutor() {
-        executorMultimap.clear();
+        executorMap.clear();
         return this;
     }
 
@@ -69,14 +69,14 @@ public abstract class GuiItemBase<Handler, Item> implements GuiItem<Handler, Ite
     }
 
     public void execute(GuiMenu<Handler, Item> menu, Handler handler, InventoryAction inventoryAction) {
-        for (Executor<Handler> handlerExecutor : executorMultimap.get(inventoryAction)) {
+        for (Executor<Handler> handlerExecutor : executorMap.get(inventoryAction)) {
             if (handlerExecutor instanceof GuiMenuItemExecutor){
                 ((GuiMenuItemExecutor<Handler, Item>) handlerExecutor).execute(menu , handler);
             }
             handlerExecutor.execute(handler);
         }
         if (inventoryAction != null) {
-            for (Executor<Handler> handlerExecutor : executorMultimap.get(InventoryAction.ALL)) {
+            for (Executor<Handler> handlerExecutor : executorMap.get(InventoryAction.ALL)) {
                 if (handlerExecutor instanceof GuiMenuItemExecutor){
                     ((GuiMenuItemExecutor<Handler, Item>) handlerExecutor).execute(menu , handler);
                 }
@@ -89,7 +89,7 @@ public abstract class GuiItemBase<Handler, Item> implements GuiItem<Handler, Ite
     @Override
     public GuiItemBase<Handler, Item> clone() {
         GuiItemBase<Handler, Item> clone = (GuiItemBase<Handler, Item>) super.clone();
-        clone.executorMultimap = HashMultimap.create(executorMultimap);
+        clone.executorMap = HashMultimap.create(executorMap);
         clone.replacements = new THashSet<>(replacements);
         return clone;
     }

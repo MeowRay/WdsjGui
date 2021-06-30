@@ -8,9 +8,8 @@ import net.wdsj.mcserver.gui.common.render.GuiMenuRenderItem;
 import net.wdsj.mcserver.gui.common.utils.Utils;
 import org.apache.commons.lang.ArrayUtils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * @author Arthur
@@ -21,6 +20,7 @@ public class GuiMenuItemContainer<Handler, Item> implements Cloneable {
 
     private final List<Integer> list;
     private final List<GuiItemRenderBuilder<Handler, Item>> guiitemContainer = new ArrayList<>();
+    private final Map<GuiItem<Handler, Item>, GuiItemRenderBuilder<Handler, Item>> guiItems = new HashMap<>();
 
     public GuiMenuItemContainer(List<Integer> list) {
         this.list = list;
@@ -34,8 +34,21 @@ public class GuiMenuItemContainer<Handler, Item> implements Cloneable {
         guiitemContainer.add(guiItem);
     }
 
+    public void addItem(GuiItem<Handler, Item> guiItem) {
+        GuiItemRenderBuilder<Handler, Item> builder = new GuiItemRenderBuilder<>(guiItem);
+        addItem(builder);
+        guiItems.put(guiItem, builder);
+    }
+
     public void removeItem(GuiItemRenderBuilder<Handler, Item> guiItem) {
         guiitemContainer.remove(guiItem);
+    }
+
+    public void removeItem(GuiItem<Handler, Item> guiItem) {
+        GuiItemRenderBuilder<Handler, Item> remove = guiItems.remove(guiItem);
+        if (remove != null) {
+            guiitemContainer.remove(remove);
+        }
     }
 
     public void build(GuiMenu<Handler, Item> guiMenu) {

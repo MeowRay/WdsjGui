@@ -28,7 +28,6 @@ public abstract class GuiMenuPage<T, Handler, Item> {
 
     private int nextSlot;
 
-    @Getter
     private int openPage;
 
     private final String originTitle;
@@ -50,6 +49,10 @@ public abstract class GuiMenuPage<T, Handler, Item> {
 
     public void setNextSlot(int nextSlot) {
         this.nextSlot = nextSlot;
+    }
+
+    public int getOpenPage() {
+        return openPage;
     }
 
     public abstract T getContent(int index);

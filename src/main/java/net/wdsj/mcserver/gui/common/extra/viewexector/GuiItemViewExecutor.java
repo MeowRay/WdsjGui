@@ -4,6 +4,8 @@ import mc233.cn.wdsjlib.global.common.itemstack.ItemCommonBuilder;
 import net.wdsj.mcserver.gui.common.item.GuiItem;
 import net.wdsj.servercore.interfaces.Executor;
 
+import java.util.List;
+
 /**
  * @author Arthur
  * @version 1.0
@@ -11,8 +13,7 @@ import net.wdsj.servercore.interfaces.Executor;
  */
 public interface GuiItemViewExecutor<Handler> extends Executor<Handler> {
 
-    ItemCommonBuilder getViewBuilder(Handler handler);
 
-    GuiItem<Handler , ?> getItem(Handler handler);
+    List<GuiItem<? , ?>> getItems(Handler handler);
 
 }

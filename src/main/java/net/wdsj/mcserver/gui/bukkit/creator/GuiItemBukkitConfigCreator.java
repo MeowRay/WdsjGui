@@ -1,10 +1,13 @@
 package net.wdsj.mcserver.gui.bukkit.creator;
 
+import mc233.cn.wdsjlib.global.common.itemstack.ItemCommonBuilder;
 import mc233.cn.wdsjlib.global.config.ItemStackConfig;
 import net.wdsj.mcserver.gui.bukkit.item.GuiItemConfigBukkit;
 import net.wdsj.mcserver.gui.common.config.GuiItemStackConfig;
 import net.wdsj.mcserver.gui.common.creator.GuiItemConfigCreator;
 import net.wdsj.mcserver.gui.common.item.GuiItem;
+import net.wdsj.mcserver.gui.common.item.GuiItemCommon;
+import net.wdsj.servercore.compatible.XMaterial;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

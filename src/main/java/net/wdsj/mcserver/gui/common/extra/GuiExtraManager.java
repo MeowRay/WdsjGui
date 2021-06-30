@@ -17,7 +17,6 @@ public class GuiExtraManager {
 
     private static final Map<String, GuiItemViewExecutorCaller<?>> itemViewExecutorCallerMap = new HashMap<>();
 
-
     public static void registerItemCaller(String type, GuiItemViewExecutorCaller<?> caller) {
         itemViewExecutorCallerMap.put(type, caller);
     }
