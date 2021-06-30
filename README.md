@@ -30,6 +30,7 @@ bungeecord: all
 * 惰性加载
 
 ## 演示
+![alt](https://github.com/MeowRay/WdsjGui/blob/main/%E6%B8%B8%E6%88%8F%E7%B3%BB%E7%BB%9F.gif)
 
 ### Menu:
 ![alt 喵喵喵?](https://github.com/MeowRay/WdsjGui/raw/main/demo.gif)
