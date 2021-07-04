@@ -26,7 +26,6 @@ public class GuiFactory {
 
     public static GuiMenu<Player, ItemStack> createBukkitPacketGuiMenu(Player player, InventoryType type, String title) {
         return new GuiMenu<Player, ItemStack>(player, type, title) {
-
             @Override
             public GuiMenuRenderAdapter<Player, ItemStack> renderAdapter() {
                 return GUIMENU_RENDER_BUKKIT_PACKET_ADAPTER;

@@ -24,7 +24,7 @@ public class GuiItemPaneLineModel<Handler, Item> extends GuiItemBaseModel<Handle
 
     public void init(){
 
-        int e = (line * 9)  -1;
+        int e = (line * 9) ; // -1
         int s = e - 8;
 
         if (s >= 0) {

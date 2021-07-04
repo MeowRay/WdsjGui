@@ -129,5 +129,26 @@ public abstract class GuiMenuShop<T extends GuiMenuShop.Commodity<?>, Handler, I
         }
 
 
+        public V getValue() {
+            return value;
+        }
+
+        public EcoHandler<?> getEcoHandler() {
+            return ecoHandler;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public EcoData getPrice() {
+            return price;
+        }
+
+        public List<String> getServers() {
+            return servers;
+        }
+
+
     }
 }

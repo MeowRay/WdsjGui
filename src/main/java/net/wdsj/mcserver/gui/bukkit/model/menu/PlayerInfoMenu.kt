@@ -80,7 +80,7 @@ class PlayerInfoMenu(owner: Player, target: String) : GuiMenuStatic<Player, Item
                 )
                     .addActionExecutor(
                         InventoryAction.LEFT,
-                        GuiItemBukkitCommandExecutor("console:bungeeplayercommand ${owner.name} ghgl yq ${target}")
+                        GuiItemBukkitCommandExecutor("console:bungeeplayercommand ${owner.name} gh yq ${target}")
                     )
                     .addActionExecutor(InventoryAction.LEFT, GuiItemBukkitCloseExecutor())
             )

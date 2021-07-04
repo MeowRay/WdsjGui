@@ -4,8 +4,6 @@ import com.comphenix.packetwrapper.WrapperPlayClientUpdateSign;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import net.minecraft.server.v1_8_R3.PacketPlayInUpdateSign;
-import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateSign;
 import net.wdsj.mcserver.gui.common.GuiData;
 import net.wdsj.mcserver.gui.common.GuiManager;
 import net.wdsj.mcserver.gui.common.gui.sign.GuiSign;
@@ -35,7 +33,7 @@ public class GuiSignBukkitPacketListener extends PacketAdapter {
         if (guiData.getWindowId() == playClientUpdateSign.getLocation().hashCode()) {
             GuiSign<Player> guiSign = (GuiSign<Player>) guiData.getNowOpen();
             guiSign.execute(event.getPlayer(), playClientUpdateSign.getLines());
-            guiData.close();
+            guiData.setClose();
             event.setCancelled(true);
             try {
                 Location location = playClientUpdateSign.getLocation().toLocation(event.getPlayer().getWorld());

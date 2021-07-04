@@ -30,7 +30,7 @@ public class GuiManager {
     public static <Handler> boolean close(Handler handler) {
         GuiData<Handler> guiData = getGuiData(handler);
         if (guiData.getNowOpen() != null) guiData.getNowOpen().close(handler, guiData.getWindowId());
-        return guiData.close();
+        return guiData.setClose();
     }
 
 

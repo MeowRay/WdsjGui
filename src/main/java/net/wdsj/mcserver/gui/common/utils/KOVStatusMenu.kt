@@ -16,6 +16,7 @@ import net.wdsj.mcserver.gui.common.item.GuiItemCommon
 import net.wdsj.mcserver.gui.common.utils.TemplateUtils.Companion.setLastBackButton
 import net.wdsj.mcserver.gui.common.utils.TemplateUtils.Companion.setUnderEvenlyByPageButton
 import net.wdsj.mcserver.langutils.lang.convert.EnumLang
+import net.wdsj.servercore.WdsjServerAPI
 import net.wdsj.servercore.compatible.XEnchantment
 import net.wdsj.servercore.compatible.XItemFlag
 import net.wdsj.servercore.compatible.XMaterial
@@ -99,6 +100,15 @@ class Page<O : Any>(
 
 }
 
+class KOVStatusChangeEvent<H : Any, T : Any>(
+    val handler: H,
+    val entity: KOVColumnEntity<T>,
+    val oldValue: T,
+    var newValue: T,
+    var cancel: Boolean = false
+) {
+
+}
 
 class KOVStatusGuiManager {
 
@@ -126,8 +136,13 @@ class KOVStatusGuiManager {
 
                 val executor: GuiMenuItemExecutor<Any, Any>
                 executor = object : GuiMenuItemExecutor<Any, Any> {
-                    override fun execute(menu: GuiMenu<Any, Any>, handler: Any?) {
-                        kov.set(kovEntity, !kov.get(kovEntity, false))
+                    override fun execute(menu: GuiMenu<Any, Any>, handler: Any) {
+                        val old = kov.get(kovEntity, false)
+                        val event = KOVStatusChangeEvent(handler, kovEntity, old, !old)
+                        WdsjServerAPI.getEventBus().post(event)
+                        if (event.cancel.not()){
+                            kov.set(kovEntity, event.newValue)
+                        }
                     }
                 }
                 (guiitem as GuiItemCommon<Any, Any>).addActionExecutor(InventoryAction.LEFT, executor)

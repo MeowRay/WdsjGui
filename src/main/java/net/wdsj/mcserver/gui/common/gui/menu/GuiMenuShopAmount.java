@@ -136,15 +136,16 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
     public abstract void success(Handler handler, int amount, T commodity);
 
 
-    @Getter
     @Setter
     @Accessors(chain = true)
     public static class Commodity<V> extends GuiMenuShop.Commodity<V> {
 
         private int defaultAmount =1;
+
+
         private int[] amounts = new int[0];
         private int maxAmount = 640;
-        private String unit = "个";
+        private String unit = "单位";
 
         public Commodity(V value, @NonNull String name, @NonNull EcoHandler<?> ecoHandler, @NonNull EcoData price, List<String> servers) {
             super(value, name, ecoHandler, price, servers);
@@ -158,6 +159,24 @@ public abstract class GuiMenuShopAmount<T extends GuiMenuShopAmount.Commodity<?>
             super(value, name, type, price);
         }
 
+
+        public int[] getAmounts() {
+            return amounts;
+        }
+
+
+
+        public int getDefaultAmount() {
+            return defaultAmount;
+        }
+
+        public int getMaxAmount() {
+            return maxAmount;
+        }
+
+        public String getUnit() {
+            return unit;
+        }
 
     }
 

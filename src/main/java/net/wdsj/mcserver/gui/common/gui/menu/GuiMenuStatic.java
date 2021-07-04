@@ -1,6 +1,7 @@
 package net.wdsj.mcserver.gui.common.gui.menu;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+import net.wdsj.mcserver.gui.common.adapter.GuiMenuRenderAdapter;
 import net.wdsj.mcserver.gui.common.builder.GuiItemRenderBuilder;
 import net.wdsj.mcserver.gui.common.item.GuiItem;
 import net.wdsj.mcserver.gui.common.render.GuiMenuRenderItem;
@@ -18,6 +19,10 @@ public  class GuiMenuStatic<Handler, Item> extends GuiMenu<Handler, Item> {
 
     public GuiMenuStatic(Handler owner, InventoryType inventoryType, String title) {
         super(owner, inventoryType, title);
+    }
+
+    public GuiMenuStatic(GuiMenuRenderAdapter<Handler, Item> renderAdapter, Handler owner, InventoryType inventoryType, String title) {
+        super(renderAdapter, owner, inventoryType, title);
     }
 
     public void setItem(int slot, GuiItem<Handler, Item> guiItem) {

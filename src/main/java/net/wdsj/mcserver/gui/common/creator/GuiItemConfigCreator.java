@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface GuiItemConfigCreator<Handler, Item> {
 
-    GuiItem<Handler, Item> create(Handler handler,Map<String, String> args, GuiItemStackConfig config);
+    GuiItem<Handler, Item> create(Handler handler, Map<String, String> args, GuiItemStackConfig config);
 
 }

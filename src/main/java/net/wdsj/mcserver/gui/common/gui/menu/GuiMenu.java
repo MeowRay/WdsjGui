@@ -48,9 +48,14 @@ public class GuiMenu<Handler, Item> implements Gui<Handler> {
     protected final Handler owner;
 
 
-    private final GuiMenuRenderAdapter<Handler, Item> renderAdapter = (GuiMenuRenderAdapter<Handler, Item>) GuiFactory.getDefaultMenuRenderAdapter();
+    private final GuiMenuRenderAdapter<Handler, Item> renderAdapter;
 
     public GuiMenu(Handler owner, InventoryType inventoryType, String title) {
+        this((GuiMenuRenderAdapter<Handler, Item>) GuiFactory.getDefaultMenuRenderAdapter(), owner, inventoryType, title);
+    }
+
+    public GuiMenu(GuiMenuRenderAdapter<Handler, Item> renderAdapter, Handler owner, InventoryType inventoryType, String title) {
+        this.renderAdapter = renderAdapter;
         this.guiItemMap = new THashMap<>(inventoryType.getSize());
         this.guiMenuRenderItems = new ArrayList<>(inventoryType.getSize());
         this.inventoryType = inventoryType;
@@ -166,7 +171,7 @@ public class GuiMenu<Handler, Item> implements Gui<Handler> {
                     renderAdapter().changeTitle(menuActiveHandler.getHandler(), inventoryType, GuiMenu.this.title);
                 }
             }
-        } , 2, TimeUnit.SECONDS);
+        }, 2, TimeUnit.SECONDS);
     }
 
     public GuiMenuRenderAdapter<Handler, Item> renderAdapter() {
@@ -192,4 +197,9 @@ public class GuiMenu<Handler, Item> implements Gui<Handler> {
     public Handler getOwner() {
         return owner;
     }
+
+    public GuiMenuRenderAdapter<Handler, Item> getRenderAdapter() {
+        return renderAdapter;
+    }
+
 }

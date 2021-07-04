@@ -1,14 +1,10 @@
 package net.wdsj.mcserver.gui.bukkit.listener;
 
-import com.comphenix.packetwrapper.WrapperPlayClientWindowClick;
 import com.comphenix.packetwrapper.wrapper.WrapperXPlayClientWindowClick;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.events.PacketPostAdapter;
-import gnu.trove.map.TMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import mc233.cn.wdsjlib.bukkit.api.wrapper.SoundWrapper;
 import net.wdsj.mcserver.gui.bukkit.GuiBukkit;
 import net.wdsj.mcserver.gui.common.Gui;
 import net.wdsj.servercore.WdsjServerAPI;
@@ -19,16 +15,10 @@ import net.wdsj.servercore.common.LocalCooldown;
 import net.wdsj.servercore.eunm.inventory.InventoryAction;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 /**
  * @author Arthur
@@ -150,7 +140,7 @@ public class GuiMenuBukkitPacketListener extends PacketAdapter {
             final GuiData<Player> guiData = GuiManager.getGuiData(player);
             if (guiData.getWindowId() == event.getPacket().getIntegers().read(0)) {
                 GuiMenu guiMenu = (GuiMenu) guiData.getNowOpen();
-                if (guiData.close()) {
+                if (guiData.setClose()) {
                     if (guiMenu.getGuiMenuProp().getCloseSound() != null) {
                         guiMenu.getGuiMenuProp().getCloseSound().play(player);
                     }

@@ -34,7 +34,11 @@ public class GuiExtraManager {
         return null;
     }
 
-    public static <T> GuiItemViewExecutor<T> getItem(String type, String key) {
+    public static <T> GuiItemViewExecutorCaller<T> getViewExecutorCaller(String type) {
+        return (GuiItemViewExecutorCaller<T>) itemViewExecutorCallerMap.get(type);
+    }
+
+    public static <T> GuiItemViewExecutor<T> getItem(String type, Object key) {
         GuiItemViewExecutorCaller guiItemViewExecutorCaller = itemViewExecutorCallerMap.get(type);
         if (guiItemViewExecutorCaller != null) {
             return guiItemViewExecutorCaller.get(key);

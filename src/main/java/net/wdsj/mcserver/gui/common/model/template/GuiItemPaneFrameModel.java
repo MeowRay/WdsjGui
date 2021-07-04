@@ -22,14 +22,14 @@ public class GuiItemPaneFrameModel<Handler, Item> extends GuiItemBaseModel<Handl
 
     public void init() {
         setItem(0, headerItem());
-        for (Integer integer : getGuiMenu().getFreeSlot(1, 8)) {
+        for (Integer integer : getGuiMenu().getFreeSlot(1, 9)) {
             setItem(integer, paneItem());
         }
         int size = getSize();
         for (int i : ALL) {
             if (size - 1 == i) {
                 setItem(i, footerItem());
-                for (Integer integer : getGuiMenu().getFreeSlot(size - 9, size - 2)) {
+                for (Integer integer : getGuiMenu().getFreeSlot(size - 9, size - 1)) {
                     setItem(integer, paneItem());
                 }
                 return;

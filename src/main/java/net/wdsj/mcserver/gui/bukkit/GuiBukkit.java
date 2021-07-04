@@ -12,10 +12,7 @@ import net.wdsj.mcserver.gui.bukkit.command.GuiAdminCommand;
 import net.wdsj.mcserver.gui.bukkit.command.GuiPlayerCommand;
 import net.wdsj.mcserver.gui.bukkit.creator.GuiItemBukkitConfigCreator;
 import net.wdsj.mcserver.gui.bukkit.executor.*;
-import net.wdsj.mcserver.gui.bukkit.listener.ExecutorItemListener;
-import net.wdsj.mcserver.gui.bukkit.listener.GuiMenuBukkitPacketListener;
-import net.wdsj.mcserver.gui.bukkit.listener.GuiMenuListener;
-import net.wdsj.mcserver.gui.bukkit.listener.GuiSignBukkitPacketListener;
+import net.wdsj.mcserver.gui.bukkit.listener.*;
 import net.wdsj.mcserver.gui.common.*;
 import net.wdsj.mcserver.gui.common.creator.GuiItemExecutorCreator;
 import net.wdsj.mcserver.gui.common.creator.GuiSignExecutorCreator;
@@ -40,7 +37,10 @@ import java.util.Map;
 
 public final class GuiBukkit extends JavaPlugin {
 
-    @Getter
+    public static GuiBukkit getInstance() {
+        return instance;
+    }
+
     private static GuiBukkit instance;
 
     @Getter
@@ -57,6 +57,7 @@ public final class GuiBukkit extends JavaPlugin {
         WdsjServerAPI.getPluginManager().registerCommand(CommandProxyBuilder.newBuilder(this, new GuiAdminCommand()).setLabel("guiadmin"));
         WdsjServerAPI.getPluginManager().registerCommand(CommandProxyBuilder.newBuilder(this, new GuiPlayerCommand()).setLabel("gui"));
         Bukkit.getPluginManager().registerEvents(new GuiMenuListener(), this);
+        Bukkit.getPluginManager().registerEvents(new GuiMenuBukkitEntityListener() , this);
 
         guiMenuBukkitPacketListener = new GuiMenuBukkitPacketListener(this);
         guiSignBukkitPacketListener = new GuiSignBukkitPacketListener(this);

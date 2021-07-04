@@ -5,6 +5,7 @@ import net.wdsj.mcserver.gui.common.GuiManager;
 import net.wdsj.mcserver.gui.common.adapter.GuiMenuRenderAdapter;
 import net.wdsj.servercore.WdsjServerAPI;
 import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu;
+import net.wdsj.servercore.eunm.inventory.InventoryAction;
 import net.wdsj.servercore.eunm.inventory.InventoryType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -21,10 +22,17 @@ public class GuiMenuRenderBukkitEntityAdapter implements GuiMenuRenderAdapter<Pl
 
 
     private final Inventory inventory;
-    private boolean first = true;
 
-    public GuiMenuRenderBukkitEntityAdapter(Inventory inventory) {
+    private boolean first = true;
+    private final boolean async;
+
+    public GuiMenuRenderBukkitEntityAdapter(Inventory inventory ) {
+        this(inventory,true);
+    }
+
+    public GuiMenuRenderBukkitEntityAdapter(Inventory inventory , boolean async) {
         this.inventory = inventory;
+        this.async = async;
     }
 
     @Override
@@ -73,8 +81,15 @@ public class GuiMenuRenderBukkitEntityAdapter implements GuiMenuRenderAdapter<Pl
     }
 
 
+    public boolean isCancel(Player player , InventoryAction action , int slot){
+        return true;
+    }
+
     private Map<Integer, ItemStack> getView(GuiMenu<Player, ItemStack> guiItemMap, Player handler) {
         return Maps.transformValues(guiItemMap.getGuiItemMap(), playerItemStackGuiItem -> playerItemStackGuiItem.getItemView(handler));
     }
 
+    public boolean isAsync() {
+        return async;
+    }
 }

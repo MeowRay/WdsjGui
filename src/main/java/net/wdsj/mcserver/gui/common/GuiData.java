@@ -4,7 +4,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.Setter;
+import net.wdsj.mcserver.gui.common.event.GuiCloseEvent;
+import net.wdsj.mcserver.gui.common.event.GuiOpenEvent;
 import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu;
+import net.wdsj.servercore.WdsjServerAPI;
 import net.wdsj.servercore.utils.ClassUtils;
 import net.wdsj.servercore.utils.ReflectionUtils;
 import org.checkerframework.checker.units.qual.C;
@@ -17,20 +20,31 @@ import java.util.function.Consumer;
  * @version 1.0
  * @date 2018/8/11 16:53
  */
-@Getter
 public class GuiData<Handler> {
 
     private final Handler handler;
     @Setter
     private Gui<Handler> nowOpen;
+
     private int windowId;
 
     private final Map<Class<?>, List<Gui<Handler>>> history = new HashMap<>();
-
     private boolean openOverride = false;
 
     public GuiData(Handler handler) {
         this.handler = handler;
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public Gui<Handler> getNowOpen() {
+        return nowOpen;
+    }
+
+    public int getWindowId() {
+        return windowId;
     }
 
 
@@ -39,12 +53,14 @@ public class GuiData<Handler> {
         this.nowOpen = guiMenu;
         this.windowId = windowId;
         addHistory(nowOpen);
+        WdsjServerAPI.getEventBus().post(new GuiOpenEvent<>(nowOpen));
     }
 
-    public boolean close() {
+    public boolean setClose() {
         if (nowOpen != null) {
             nowOpen = null;
             windowId = -1;
+            WdsjServerAPI.getEventBus().post(new GuiCloseEvent<>(nowOpen));
             return true;
         }
         return false;
@@ -80,6 +96,11 @@ public class GuiData<Handler> {
             guis.add(guiMenu);
             history.put(aClass, guis);
         });
+    }
+
+
+    public boolean isOpenOverride() {
+        return openOverride;
     }
 
 
