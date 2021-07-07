@@ -9,6 +9,8 @@ import javafx.util.Pair;
 import mc233.cn.wdsjlib.global.common.itemstack.ItemCommonBuilder;
 import net.wdsj.common.simpleconfig.ConfigurationSection;
 import net.wdsj.common.simpleconfig.file.YamlConfiguration;
+import net.wdsj.mcserver.gui.common.command.GuiLabelBaseController;
+import net.wdsj.mcserver.gui.common.command.GuiLabelController;
 import net.wdsj.mcserver.gui.common.config.GuiItemModelRenderConfig;
 import net.wdsj.mcserver.gui.common.config.GuiItemRenderConfig;
 import net.wdsj.mcserver.gui.common.config.GuiItemShowConfig;
@@ -30,6 +32,7 @@ import net.wdsj.mcserver.gui.common.wrapper.GuiMenuConfigWrapper;
 import net.wdsj.mcserver.gui.common.wrapper.GuiSignConfigWrapper;
 import net.wdsj.mcserver.gui.common.wrapper.CanOpenItem;
 import net.wdsj.servercore.WdsjServerAPI;
+import net.wdsj.servercore.common.command.CommandProxyBuilder;
 import net.wdsj.servercore.config.invoke.ConfigInvoke;
 import net.wdsj.servercore.database.frame.box.value.bytes.ymal.DatabaseBytesConfigValue;
 import net.wdsj.servercore.eunm.inventory.InventoryAction;
@@ -37,6 +40,7 @@ import net.wdsj.servercore.utils.ArrayUtils;
 import net.wdsj.servercore.utils.ReflectionUtils;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
 /**
@@ -56,7 +60,7 @@ public class GuiConfigManager {
 
     private static final Map<String, GuiItemConfigCreator<?, ?>> itemCreatorMap = new THashMap<>();
 
-    private static final Map<String, CanOpenItem> commandMap = new HashMap<>();
+    private static  GuiLabelController labelController = new GuiLabelBaseController();
 
     private static final Map<String, GuiMenuConfigWrapper> menuMap = new THashMap<>();
 
@@ -116,7 +120,6 @@ public class GuiConfigManager {
         menuKeyConfig.clear();
         itemModelMap.clear();
         menuMap.clear();
-        commandMap.clear();
         YamlConfiguration menuYaml = WdsjServerAPI.getConfigManager().readServerGroup("Gui#Menu", new DatabaseBytesConfigValue());
         YamlConfiguration menuGlobalYaml = WdsjServerAPI.getConfigManager().readMain("Gui#Menu", new DatabaseBytesConfigValue());
         YamlConfiguration modelYaml = WdsjServerAPI.getConfigManager().readServerGroup("Gui#Model", new DatabaseBytesConfigValue());
@@ -222,7 +225,7 @@ public class GuiConfigManager {
             GuiMenuConfigWrapper wrapper = new GuiMenuConfigWrapper(section);
             registerMenu(key, wrapper);
             if (wrapper.getCommand() != null) {
-                commandMap.put(wrapper.getCommand().toLowerCase(), wrapper);
+                labelController.register(wrapper.getCommand(), wrapper);
             }
             return true;
         }
@@ -244,7 +247,7 @@ public class GuiConfigManager {
             GuiSignConfigWrapper wrapper = new GuiSignConfigWrapper(section);
             registerSign(key, wrapper);
             if (wrapper.getCommand() != null) {
-                commandMap.put(wrapper.getCommand().toLowerCase(), wrapper);
+                labelController.register(wrapper.getCommand(), wrapper);
             }
             return true;
         }
@@ -317,11 +320,6 @@ public class GuiConfigManager {
         }
         //throw new GuiItemCreatorNotFoundException("default");
     }
-
-    public static CanOpenItem getCommandGuiWrapper(String command) {
-        return commandMap.get(command);
-    }
-
 
     //TODO
     private static final Set<GuiItemRenderConfig> renderOverrideConfigSet = new THashSet<>();
@@ -440,6 +438,10 @@ public class GuiConfigManager {
 
     public static <Handler, Item> GuiItemConfigCreator<Handler, Item> getItemCreator(String key) {
         return (GuiItemConfigCreator<Handler, Item>) itemCreatorMap.get(key);
+    }
+
+    public static void setLabelController(GuiLabelController labelController) {
+        GuiConfigManager.labelController = labelController;
     }
 
 

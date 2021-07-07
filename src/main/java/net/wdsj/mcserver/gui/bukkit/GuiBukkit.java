@@ -9,24 +9,24 @@ import mc233.cn.wdsjlib.bukkit.utils.BukkitUtils;
 import mc233.cn.wdsjlib.global.api.eco.EcoAPI;
 import mc233.cn.wdsjlib.global.config.ItemStackConfig;
 import net.wdsj.mcserver.gui.bukkit.command.GuiAdminCommand;
+import net.wdsj.mcserver.gui.bukkit.command.GuiLabelBukkitController;
 import net.wdsj.mcserver.gui.bukkit.command.GuiPlayerCommand;
 import net.wdsj.mcserver.gui.bukkit.creator.GuiItemBukkitConfigCreator;
 import net.wdsj.mcserver.gui.bukkit.executor.*;
-import net.wdsj.mcserver.gui.bukkit.listener.*;
+import net.wdsj.mcserver.gui.bukkit.listener.ExecutorItemListener;
+import net.wdsj.mcserver.gui.bukkit.listener.GuiMenuBukkitEntityListener;
+import net.wdsj.mcserver.gui.bukkit.listener.GuiMenuBukkitPacketListener;
+import net.wdsj.mcserver.gui.bukkit.listener.GuiSignBukkitPacketListener;
 import net.wdsj.mcserver.gui.common.*;
 import net.wdsj.mcserver.gui.common.creator.GuiItemExecutorCreator;
 import net.wdsj.mcserver.gui.common.creator.GuiSignExecutorCreator;
 import net.wdsj.mcserver.gui.common.executor.GuiItemCommonOpenExecutor;
-import net.wdsj.mcserver.gui.common.executor.GuiItemExecutor;
 import net.wdsj.mcserver.gui.common.utils.MenuUtils;
-import net.wdsj.mcserver.gui.common.utils.Utils;
 import net.wdsj.servercore.WdsjServerAPI;
 import net.wdsj.servercore.common.command.CommandProxyBuilder;
 import net.wdsj.servercore.compatible.XSound;
-import net.wdsj.servercore.config.invoke.ConfigInvoke;
 import net.wdsj.servercore.protocol.ProtocolVersion;
 import net.wdsj.servercore.utils.ArrayUtils;
-import net.wdsj.servercore.utils.ThreadUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -56,7 +56,6 @@ public final class GuiBukkit extends JavaPlugin {
         defaultAsync = WdsjServerAPI.getNmsService().getProtocolVersion().getId() <= ProtocolVersion.v1_12_2.getId();
         WdsjServerAPI.getPluginManager().registerCommand(CommandProxyBuilder.newBuilder(this, new GuiAdminCommand()).setLabel("guiadmin"));
         WdsjServerAPI.getPluginManager().registerCommand(CommandProxyBuilder.newBuilder(this, new GuiPlayerCommand()).setLabel("gui"));
-        Bukkit.getPluginManager().registerEvents(new GuiMenuListener(), this);
         Bukkit.getPluginManager().registerEvents(new GuiMenuBukkitEntityListener() , this);
 
         guiMenuBukkitPacketListener = new GuiMenuBukkitPacketListener(this);
@@ -70,6 +69,8 @@ public final class GuiBukkit extends JavaPlugin {
     public void init(Plugin plugin) {
         ProtocolLibrary.getProtocolManager().addPacketListener(guiMenuBukkitPacketListener);
         ProtocolLibrary.getProtocolManager().addPacketListener(guiSignBukkitPacketListener);
+
+        GuiConfigManager.setLabelController(new GuiLabelBukkitController(this));
 
         WdsjLib.getInstance().registerPlayerQuitCleaner(plugin, (GuiManager::removeGuiData));
 

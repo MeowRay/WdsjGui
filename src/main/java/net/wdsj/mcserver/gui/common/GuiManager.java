@@ -4,6 +4,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import gnu.trove.map.hash.THashMap;
 import net.wdsj.mcserver.gui.common.gui.menu.GuiMenu;
+import net.wdsj.mcserver.gui.common.utils.GuiEventListener;
+import net.wdsj.servercore.WdsjServerAPI;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +23,10 @@ public class GuiManager {
 
     private static GuiMenuFunction<?> GUI_MENU_FUNCTION;
 
+
+    static {
+        WdsjServerAPI.getEventBus().register(GuiEventListener.INSTANCE);
+    }
 
     public static <Handler> void open(Handler handler, Gui<Handler> guiMenu) {
         GuiData<Handler> guiData = getGuiData(handler);

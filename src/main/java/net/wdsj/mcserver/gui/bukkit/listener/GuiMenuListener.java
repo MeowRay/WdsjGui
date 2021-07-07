@@ -15,6 +15,7 @@ import java.util.Map;
  * @version 1.0
  * @date 2020/11/18 12:55
  */
+@Deprecated
 public class GuiMenuListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
@@ -32,8 +33,6 @@ public class GuiMenuListener implements Listener {
                 commandGuiWrapper.open(event.getPlayer() , map);
             }
         }
-
-
     }
 
 

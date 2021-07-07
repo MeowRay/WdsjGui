@@ -58,9 +58,10 @@ public class GuiData<Handler> {
 
     public boolean setClose() {
         if (nowOpen != null) {
+            GuiCloseEvent<Handler> event = new GuiCloseEvent<>(nowOpen);
             nowOpen = null;
             windowId = -1;
-            WdsjServerAPI.getEventBus().post(new GuiCloseEvent<>(nowOpen));
+            WdsjServerAPI.getEventBus().post(event);
             return true;
         }
         return false;
