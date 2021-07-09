@@ -1,9 +1,10 @@
 # WdsjGui
-> 支持bungeecord&amp;spigot基于封包的gui插件，可自实现渲染器来支持更多服务端，这可能是Minecraft中最屌的菜单插件哈哈哈
+> 支持bungeecord&amp;spigot基于封包的gui插件，可自实现渲染器来支持更多服务端，
+> 这可能是Minecraft中最屌的菜单插件哈哈哈
 > Support spigot&bungeecord inventory/sign/...(gui) plugin
 
 
-spigot: 1.7-1.16
+spigot: 1.7-1.17
 bungeecord: all
 
 **仅供学习使用!禁止商用,如二次开发需注明出处**
