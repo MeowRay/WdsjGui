@@ -18,7 +18,7 @@ import java.util.Map;
 @Deprecated
 public class GuiMenuListener implements Listener {
 
-    @EventHandler(ignoreCancelled = true)
+/*    @EventHandler(ignoreCancelled = true)
     public void on(PlayerCommandPreprocessEvent event) {
         String[] s = event.getMessage().split(" ", 2);
         CanOpenItem commandGuiWrapper = GuiConfigManager.getCommandGuiWrapper(s[0].substring(1).toLowerCase());
@@ -33,7 +33,7 @@ public class GuiMenuListener implements Listener {
                 commandGuiWrapper.open(event.getPlayer() , map);
             }
         }
-    }
+    }*/
 
 
 }

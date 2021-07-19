@@ -1,6 +1,7 @@
 package net.wdsj.mcserver.gui.bukkit.adapter;
 
 import com.google.common.collect.Maps;
+import lombok.Getter;
 import net.wdsj.mcserver.gui.common.GuiManager;
 import net.wdsj.mcserver.gui.common.adapter.GuiMenuRenderAdapter;
 import net.wdsj.servercore.WdsjServerAPI;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,19 +22,29 @@ import java.util.Map;
  */
 public class GuiMenuRenderBukkitEntityAdapter implements GuiMenuRenderAdapter<Player, ItemStack> {
 
-
     private final Inventory inventory;
 
     private boolean first = true;
     private final boolean async;
 
-    public GuiMenuRenderBukkitEntityAdapter(Inventory inventory ) {
-        this(inventory,true);
+    public GuiMenuRenderBukkitEntityAdapter(Inventory inventory) {
+        this(inventory, true);
     }
 
-    public GuiMenuRenderBukkitEntityAdapter(Inventory inventory , boolean async) {
+    public GuiMenuRenderBukkitEntityAdapter(Inventory inventory, boolean async) {
         this.inventory = inventory;
         this.async = async;
+    }
+
+    public Map<Integer, ItemStack> getInventoryItems() {
+        Map<Integer, ItemStack> resultMap = new HashMap<>();
+        for (int i = 0; i < inventory.getContents().length; i++) {
+            ItemStack itemStack = inventory.getContents()[i];
+            if (itemStack != null) {
+                resultMap.put(i, itemStack);
+            }
+        }
+        return resultMap;
     }
 
     @Override
@@ -81,7 +93,7 @@ public class GuiMenuRenderBukkitEntityAdapter implements GuiMenuRenderAdapter<Pl
     }
 
 
-    public boolean isCancel(Player player , InventoryAction action , int slot){
+    public boolean isCancel(Player player, InventoryAction action, int slot) {
         return true;
     }
 
@@ -92,4 +104,8 @@ public class GuiMenuRenderBukkitEntityAdapter implements GuiMenuRenderAdapter<Pl
     public boolean isAsync() {
         return async;
     }
+    public Inventory getInventory() {
+        return inventory;
+    }
+
 }
